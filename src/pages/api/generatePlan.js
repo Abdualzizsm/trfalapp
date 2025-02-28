@@ -15,7 +15,12 @@ export default async function handler(req, res) {
     }
     
     // تهيئة API باستخدام مفتاح API
-    const apiKey = process.env.GEMINI_API_KEY;
+    const isProduction = process.env.NODE_ENV === 'production';
+    const apiKey = isProduction 
+      ? "AIzaSyBiQN8UfRfH8M-IWGd-Nt_xSPZkTwqMWvs" // مفتاح مباشر للاختبار في الإنتاج
+      : process.env.GEMINI_API_KEY;
+    
+    console.log("Environment:", process.env.NODE_ENV);
     
     if (!apiKey) {
       console.error("GEMINI_API_KEY is not set in environment variables");

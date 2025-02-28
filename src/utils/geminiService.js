@@ -1,7 +1,14 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 // تهيئة API بمفتاح API المخزن 
-const apiKey = process.env.GEMINI_API_KEY;
+// في بيئة الإنتاج، نستخدم مفتاح API مباشرة للاختبار
+// في بيئة التطوير، نستخدم متغير البيئة
+const isProduction = process.env.NODE_ENV === 'production';
+const apiKey = isProduction 
+  ? "AIzaSyBiQN8UfRfH8M-IWGd-Nt_xSPZkTwqMWvs" // مفتاح مباشر للاختبار في الإنتاج
+  : process.env.GEMINI_API_KEY;
+
+console.log("GeminiService - Environment:", process.env.NODE_ENV);
 console.log("GeminiService - Using API Key:", apiKey ? (apiKey.substring(0, 5) + "...") : "Not provided");
 
 if (!apiKey) {
