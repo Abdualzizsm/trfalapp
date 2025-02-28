@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { FaCalendarDay, FaPlaneDeparture, FaMapMarkedAlt, FaBed, FaUtensils, FaSun, FaMoon, FaTags, FaLightbulb, FaShare, FaSave, FaDownload, FaImage } from 'react-icons/fa';
+import { 
+  FaMapMarkedAlt, FaBed, FaCalendarDay, FaTags, FaLightbulb, 
+  FaShare, FaDownload, FaSave, FaSun, FaMoon, FaUtensils, 
+  FaMapMarkerAlt, FaMoneyBillWave, FaCalendarAlt, FaLanguage,
+  FaCloudSun, FaCheck, FaCode
+} from 'react-icons/fa';
 import { EmailShareButton, WhatsappShareButton, TwitterShareButton, FacebookShareButton, EmailIcon, WhatsappIcon, TwitterIcon, FacebookIcon } from 'react-share';
 import { getDefaultImage } from '../utils/imageService';
 import ImageGallery from './ImageGallery';
@@ -94,7 +99,7 @@ export default function TravelPlan({ plan, travelData }) {
   // وظيفة لتنزيل الخطة كملف نصي
   const handleDownloadPlan = () => {
     try {
-      const planText = `خطة السفر إلى ${travelData.destination}\n\n${plan}`;
+      const planText = `خطة السفر إلى ${travelData.destination}\n\n${JSON.stringify(plan, null, 2)}`;
       const blob = new Blob([planText], { type: 'text/plain;charset=utf-8' });
       const url = URL.createObjectURL(blob);
       
@@ -119,81 +124,344 @@ export default function TravelPlan({ plan, travelData }) {
   const renderPlanContent = () => {
     if (!plan) return <p>لا توجد خطة سفر لعرضها.</p>;
     
-    // تحويل النص إلى HTML مع الحفاظ على التنسيق
-    const formatContent = (content) => {
-      // تحويل العناوين
-      let formattedContent = content
-        .replace(/## (.*?)(?=\n|$)/g, '<h2>$1</h2>')
-        .replace(/### (.*?)(?=\n|$)/g, '<h3>$1</h3>')
-        .replace(/#### (.*?)(?=\n|$)/g, '<h4>$1</h4>');
-      
-      // تحويل النقاط
-      formattedContent = formattedContent.replace(/- (.*?)(?=\n|$)/g, '<li>$1</li>');
-      
-      // تجميع النقاط في قوائم
-      formattedContent = formattedContent.replace(/<li>.*?<\/li>(\n<li>.*?<\/li>)+/g, (match) => {
-        return '<ul>' + match + '</ul>';
-      });
-      
-      // تحويل الفقرات
-      formattedContent = formattedContent.replace(/(?<!\n<[^>]+>)([^\n<].+?)(?=\n|$)/g, '<p>$1</p>');
-      
-      // إزالة الأسطر الفارغة المتكررة
-      formattedContent = formattedContent.replace(/\n\n+/g, '\n');
-      
-      return formattedContent;
-    };
-
-    // استخراج القسم المناسب من الخطة بناءً على التبويب النشط
-    let contentSection = '';
-    
-    if (activeTab === 'summary') {
-      // استخراج قسم نظرة عامة على الوجهة
-      if (plan.includes('## 1. نظرة عامة على الوجهة')) {
-        contentSection = plan.split('## 1. نظرة عامة على الوجهة')[1].split('## 2. تفاصيل الإقامة')[0];
-      } else if (plan.includes('نظرة عامة على الوجهة')) {
-        contentSection = plan.split('نظرة عامة على الوجهة')[1].split('تفاصيل الإقامة')[0];
-      } else {
-        contentSection = plan.split('\n\n')[0] + '\n\n' + plan.split('\n\n')[1];
-      }
-    } else if (activeTab === 'accommodation') {
-      // استخراج قسم تفاصيل الإقامة
-      if (plan.includes('## 2. تفاصيل الإقامة')) {
-        contentSection = plan.split('## 2. تفاصيل الإقامة')[1].split('## 3. جدول يومي مفصل للأنشطة')[0];
-      } else if (plan.includes('تفاصيل الإقامة')) {
-        contentSection = plan.split('تفاصيل الإقامة')[1].split('جدول يومي مفصل للأنشطة')[0];
-      }
-    } else if (activeTab === 'itinerary') {
-      // استخراج قسم الجدول اليومي
-      if (plan.includes('## 3. جدول يومي مفصل للأنشطة')) {
-        contentSection = plan.split('## 3. جدول يومي مفصل للأنشطة')[1].split('## 4. توصيات للمطاعم')[0];
-      } else if (plan.includes('جدول يومي مفصل للأنشطة')) {
-        contentSection = plan.split('جدول يومي مفصل للأنشطة')[1].split('توصيات للمطاعم')[0];
-      }
-    } else if (activeTab === 'budget') {
-      // استخراج قسم الميزانية
-      if (plan.includes('## 5. تقدير تفصيلي للتكاليف')) {
-        contentSection = plan.split('## 5. تقدير تفصيلي للتكاليف')[1].split('## 6. نصائح مهمة للسفر')[0];
-      } else if (plan.includes('تقدير تفصيلي للتكاليف')) {
-        contentSection = plan.split('تقدير تفصيلي للتكاليف')[1].split('نصائح مهمة للسفر')[0];
-      }
-    } else if (activeTab === 'tips') {
-      // استخراج قسم النصائح
-      if (plan.includes('## 6. نصائح مهمة للسفر')) {
-        contentSection = plan.split('## 6. نصائح مهمة للسفر')[1];
-      } else if (plan.includes('نصائح مهمة للسفر')) {
-        contentSection = plan.split('نصائح مهمة للسفر')[1];
-      }
+    // في حالة وجود نص خام (ليس JSON)
+    if (typeof plan === 'string') {
+      return <div className="travel-plan-content">{plan}</div>;
     }
     
-    return (
-      <div 
-        className="travel-plan-content"
-        dangerouslySetInnerHTML={{ __html: formatContent(contentSection) }}
-      />
-    );
+    // عرض المحتوى حسب التبويب النشط
+    switch (activeTab) {
+      case 'summary':
+        return (
+          <div className="space-y-6">
+            {plan.overview && (
+              <>
+                <div className="ios-card">
+                  <h2 className="text-2xl font-bold text-ios-blue mb-4">{plan.overview.title || `رحلة إلى ${travelData.destination}`}</h2>
+                  <p className="text-gray-700 mb-4">{plan.overview.description}</p>
+                  
+                  {plan.overview.highlights && plan.overview.highlights.length > 0 && (
+                    <div className="mt-4">
+                      <h3 className="text-lg font-bold mb-2">أبرز المميزات:</h3>
+                      <ul className="list-disc list-inside space-y-1">
+                        {plan.overview.highlights.map((highlight, index) => (
+                          <li key={index} className="text-gray-700">{highlight}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+                
+                <div className="ios-card grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="flex items-center">
+                    <FaCalendarAlt className="text-ios-blue ml-2" />
+                    <div>
+                      <h4 className="font-bold">أفضل وقت للزيارة</h4>
+                      <p>{plan.overview.bestTimeToVisit}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center">
+                    <FaLanguage className="text-ios-blue ml-2" />
+                    <div>
+                      <h4 className="font-bold">اللغة</h4>
+                      <p>{plan.overview.language}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center">
+                    <FaMoneyBillWave className="text-ios-blue ml-2" />
+                    <div>
+                      <h4 className="font-bold">العملة</h4>
+                      <p>{plan.overview.currency}</p>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+        );
+        
+      case 'accommodation':
+        return (
+          <div className="space-y-6">
+            {plan.accommodation && plan.accommodation.recommendations && (
+              plan.accommodation.recommendations.map((hotel, index) => (
+                <div key={index} className="ios-card">
+                  <div className="flex justify-between items-start mb-3">
+                    <h3 className="text-xl font-bold text-ios-blue">{hotel.name}</h3>
+                    <span className="bg-ios-light-gray text-gray-700 px-3 py-1 rounded-full text-sm">
+                      {hotel.priceRange}
+                    </span>
+                  </div>
+                  
+                  <div className="mb-3">
+                    <span className="bg-ios-blue text-white px-3 py-1 rounded-full text-sm">
+                      {hotel.type}
+                    </span>
+                    <span className="mr-2 text-gray-600">
+                      <FaMapMarkerAlt className="inline ml-1" />
+                      {hotel.location}
+                    </span>
+                  </div>
+                  
+                  <p className="text-gray-700 mb-4">{hotel.description}</p>
+                  
+                  {hotel.features && hotel.features.length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                      {hotel.features.map((feature, idx) => (
+                        <span key={idx} className="bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-sm">
+                          <FaCheck className="inline ml-1 text-green-500" size={12} />
+                          {feature}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))
+            )}
+          </div>
+        );
+        
+      case 'itinerary':
+        return (
+          <div className="space-y-6">
+            {plan.dailyPlan && plan.dailyPlan.map((day, index) => (
+              <div key={index} className="ios-card">
+                <h3 className="text-xl font-bold text-ios-blue mb-3">
+                  اليوم {day.day}: {day.title}
+                </h3>
+                <p className="text-gray-700 mb-4">{day.description}</p>
+                
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                  {day.morning && (
+                    <div className="border-r-2 border-ios-blue pr-3">
+                      <h4 className="font-bold text-gray-800 mb-2 flex items-center">
+                        <FaSun className="ml-2 text-yellow-500" />
+                        الصباح
+                      </h4>
+                      <h5 className="font-semibold">{day.morning.activity}</h5>
+                      <p className="text-gray-600 text-sm mb-1">
+                        <FaMapMarkerAlt className="inline ml-1" size={12} />
+                        {day.morning.location}
+                      </p>
+                      <p className="text-gray-700 mb-2">{day.morning.description}</p>
+                      <p className="text-gray-600 text-sm">
+                        <FaMoneyBillWave className="inline ml-1" size={12} />
+                        {day.morning.cost}
+                      </p>
+                    </div>
+                  )}
+                  
+                  {day.afternoon && (
+                    <div className="border-r-2 border-ios-blue pr-3">
+                      <h4 className="font-bold text-gray-800 mb-2 flex items-center">
+                        <FaCloudSun className="ml-2 text-orange-500" />
+                        الظهيرة
+                      </h4>
+                      <h5 className="font-semibold">{day.afternoon.activity}</h5>
+                      <p className="text-gray-600 text-sm mb-1">
+                        <FaMapMarkerAlt className="inline ml-1" size={12} />
+                        {day.afternoon.location}
+                      </p>
+                      <p className="text-gray-700 mb-2">{day.afternoon.description}</p>
+                      <p className="text-gray-600 text-sm">
+                        <FaMoneyBillWave className="inline ml-1" size={12} />
+                        {day.afternoon.cost}
+                      </p>
+                    </div>
+                  )}
+                  
+                  {day.evening && (
+                    <div>
+                      <h4 className="font-bold text-gray-800 mb-2 flex items-center">
+                        <FaMoon className="ml-2 text-indigo-500" />
+                        المساء
+                      </h4>
+                      <h5 className="font-semibold">{day.evening.activity}</h5>
+                      <p className="text-gray-600 text-sm mb-1">
+                        <FaMapMarkerAlt className="inline ml-1" size={12} />
+                        {day.evening.location}
+                      </p>
+                      <p className="text-gray-700 mb-2">{day.evening.description}</p>
+                      <p className="text-gray-600 text-sm">
+                        <FaMoneyBillWave className="inline ml-1" size={12} />
+                        {day.evening.cost}
+                      </p>
+                    </div>
+                  )}
+                </div>
+                
+                {day.meals && (
+                  <div className="mt-4 pt-4 border-t border-gray-200">
+                    <h4 className="font-bold text-gray-800 mb-3 flex items-center">
+                      <FaUtensils className="ml-2 text-ios-blue" />
+                      الوجبات
+                    </h4>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      {day.meals.breakfast && (
+                        <div>
+                          <h5 className="font-semibold">الإفطار</h5>
+                          <p>{day.meals.breakfast.recommendation}</p>
+                          <p className="text-gray-600 text-sm">
+                            <FaMoneyBillWave className="inline ml-1" size={12} />
+                            {day.meals.breakfast.cost}
+                          </p>
+                        </div>
+                      )}
+                      
+                      {day.meals.lunch && (
+                        <div>
+                          <h5 className="font-semibold">الغداء</h5>
+                          <p>{day.meals.lunch.recommendation}</p>
+                          <p className="text-gray-600 text-sm">
+                            <FaMoneyBillWave className="inline ml-1" size={12} />
+                            {day.meals.lunch.cost}
+                          </p>
+                        </div>
+                      )}
+                      
+                      {day.meals.dinner && (
+                        <div>
+                          <h5 className="font-semibold">العشاء</h5>
+                          <p>{day.meals.dinner.recommendation}</p>
+                          <p className="text-gray-600 text-sm">
+                            <FaMoneyBillWave className="inline ml-1" size={12} />
+                            {day.meals.dinner.cost}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        );
+        
+      case 'budget':
+        return (
+          <div className="space-y-6">
+            {plan.budget && (
+              <>
+                <div className="ios-card">
+                  <h3 className="text-xl font-bold text-ios-blue mb-4">ملخص الميزانية</h3>
+                  <div className="flex justify-between items-center mb-3">
+                    <span className="text-gray-700">الميزانية الإجمالية:</span>
+                    <span className="font-bold text-lg">{plan.budget.total}</span>
+                  </div>
+                  
+                  <div className="h-8 bg-gray-200 rounded-full overflow-hidden">
+                    {plan.budget.accommodation && (
+                      <div 
+                        className="h-full bg-ios-blue" 
+                        style={{ width: plan.budget.accommodation.percentage }}
+                        title={`الإقامة: ${plan.budget.accommodation.percentage}`}
+                      ></div>
+                    )}
+                  </div>
+                </div>
+                
+                <div className="ios-card">
+                  <h3 className="text-lg font-bold mb-4">تفاصيل الميزانية</h3>
+                  
+                  <div className="space-y-4">
+                    {plan.budget.accommodation && (
+                      <div className="flex justify-between items-center pb-2 border-b border-gray-200">
+                        <div>
+                          <h4 className="font-bold">الإقامة</h4>
+                          <p className="text-gray-600 text-sm">{plan.budget.accommodation.percentage}</p>
+                        </div>
+                        <span className="font-bold">{plan.budget.accommodation.amount}</span>
+                      </div>
+                    )}
+                    
+                    {plan.budget.transportation && (
+                      <div className="flex justify-between items-center pb-2 border-b border-gray-200">
+                        <div>
+                          <h4 className="font-bold">المواصلات</h4>
+                          <p className="text-gray-600 text-sm">{plan.budget.transportation.percentage}</p>
+                        </div>
+                        <span className="font-bold">{plan.budget.transportation.amount}</span>
+                      </div>
+                    )}
+                    
+                    {plan.budget.food && (
+                      <div className="flex justify-between items-center pb-2 border-b border-gray-200">
+                        <div>
+                          <h4 className="font-bold">الطعام والشراب</h4>
+                          <p className="text-gray-600 text-sm">{plan.budget.food.percentage}</p>
+                        </div>
+                        <span className="font-bold">{plan.budget.food.amount}</span>
+                      </div>
+                    )}
+                    
+                    {plan.budget.activities && (
+                      <div className="flex justify-between items-center pb-2 border-b border-gray-200">
+                        <div>
+                          <h4 className="font-bold">الأنشطة والمعالم السياحية</h4>
+                          <p className="text-gray-600 text-sm">{plan.budget.activities.percentage}</p>
+                        </div>
+                        <span className="font-bold">{plan.budget.activities.amount}</span>
+                      </div>
+                    )}
+                    
+                    {plan.budget.shopping && (
+                      <div className="flex justify-between items-center pb-2 border-b border-gray-200">
+                        <div>
+                          <h4 className="font-bold">التسوق والهدايا</h4>
+                          <p className="text-gray-600 text-sm">{plan.budget.shopping.percentage}</p>
+                        </div>
+                        <span className="font-bold">{plan.budget.shopping.amount}</span>
+                      </div>
+                    )}
+                    
+                    {plan.budget.emergency && (
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <h4 className="font-bold">احتياطي للطوارئ</h4>
+                          <p className="text-gray-600 text-sm">{plan.budget.emergency.percentage}</p>
+                        </div>
+                        <span className="font-bold">{plan.budget.emergency.amount}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+        );
+        
+      case 'tips':
+        return (
+          <div className="space-y-6">
+            {plan.tips && plan.tips.map((tip, index) => (
+              <div key={index} className="ios-card">
+                <div className="flex items-start">
+                  <div className="bg-ios-blue text-white rounded-full w-8 h-8 flex items-center justify-center ml-3 mt-1">
+                    <span>{index + 1}</span>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-ios-blue mb-1">{tip.title}</h3>
+                    <div className="mb-2">
+                      <span className="bg-ios-light-gray text-gray-700 px-2 py-1 rounded-full text-xs">
+                        {tip.category}
+                      </span>
+                    </div>
+                    <p className="text-gray-700">{tip.description}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        );
+        
+      default:
+        return <p>يرجى اختيار قسم لعرض المعلومات.</p>;
+    }
   };
-
+  
   // وظيفة للتعرف على الأيام في خطة الرحلة وتقسيمها
   const extractDays = (text) => {
     if (!text) return [];
@@ -322,6 +590,15 @@ export default function TravelPlan({ plan, travelData }) {
         >
           <FaLightbulb className="inline-block ml-1" /> نصائح مفيدة
         </button>
+        
+        <button
+          onClick={() => setActiveTab('json')}
+          className={`px-6 py-3 font-medium ios-transition ${
+            activeTab === 'json' ? 'text-ios-blue border-b-2 border-ios-blue' : 'text-gray-500 hover:text-gray-700'
+          }`}
+        >
+          <FaCode className="inline-block ml-1" /> JSON
+        </button>
       </div>
 
       {/* عرض ملخص معلومات الرحلة */}
@@ -416,6 +693,18 @@ export default function TravelPlan({ plan, travelData }) {
             {renderPlanContent()}
           </div>
         )}
+        
+        {activeTab === 'json' && (
+          <div>
+            <h3 className="text-xl font-bold mb-4 flex items-center">
+              <FaCode className="ml-2 text-ios-blue" />
+              JSON
+            </h3>
+            <pre className="text-gray-700">
+              {JSON.stringify(plan, null, 2)}
+            </pre>
+          </div>
+        )}
       </div>
       
       {/* أزرار للمشاركة والطباعة */}
@@ -481,7 +770,7 @@ export default function TravelPlan({ plan, travelData }) {
             <EmailShareButton 
               url={window.location.href} 
               subject={`خطة سفر إلى ${travelData.destination}`}
-              body={`مرحبًا! إليك خطة سفر إلى ${travelData.destination}:\n\n${plan.substring(0, 300)}...`}
+              body={`مرحبًا! إليك خطة سفر إلى ${travelData.destination}:\n\n${JSON.stringify(plan, null, 2)}`}
               className="flex flex-col items-center"
             >
               <EmailIcon size={40} round />
