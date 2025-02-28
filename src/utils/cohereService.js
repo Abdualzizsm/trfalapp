@@ -183,6 +183,7 @@ export async function createTravelPlan(travelData) {
     
     // استخراج النص المنشأ
     const generatedText = response.generations[0].text;
+    console.log("Generated text from Cohere:", generatedText.substring(0, 200) + "...");
     
     // تحليل النص إلى كائن JSON
     try {
@@ -190,22 +191,179 @@ export async function createTravelPlan(travelData) {
       const jsonMatch = generatedText.match(/```json\s*([\s\S]*?)\s*```/) || 
                         generatedText.match(/\{[\s\S]*\}/);
       
-      const jsonString = jsonMatch ? jsonMatch[1] || jsonMatch[0] : generatedText;
-      const travelPlanObject = JSON.parse(jsonString);
+      let jsonString = jsonMatch ? jsonMatch[1] || jsonMatch[0] : generatedText;
+      
+      // تنظيف النص قبل التحليل
+      jsonString = jsonString
+        .replace(/,\s*}/g, '}')  // إزالة الفواصل الزائدة قبل الأقواس المغلقة
+        .replace(/,\s*]/g, ']')  // إزالة الفواصل الزائدة قبل الأقواس المربعة المغلقة
+        .replace(/(['"])?([a-zA-Z0-9_]+)(['"])?:/g, '"$2":')  // تأكد من أن جميع المفاتيح بين علامات اقتباس مزدوجة
+        .replace(/:\s*(['"])([^'"]*?)(['"])\s*([,}])/g, ':"$2"$4')  // تأكد من أن جميع القيم النصية بين علامات اقتباس مزدوجة
+        .replace(/:\s*'([^']*)'\s*([,}])/g, ':"$1"$2');  // تحويل علامات الاقتباس الفردية إلى مزدوجة
+      
+      console.log("Cleaned JSON string:", jsonString.substring(0, 200) + "...");
+      
+      // محاولة تحليل JSON
+      let travelPlanObject;
+      try {
+        travelPlanObject = JSON.parse(jsonString);
+      } catch (parseError) {
+        console.error("First JSON parse error:", parseError);
+        
+        // محاولة إصلاح بعض الأخطاء الشائعة
+        jsonString = jsonString
+          .replace(/\n/g, ' ')  // إزالة أسطر جديدة
+          .replace(/\r/g, ' ')  // إزالة أسطر جديدة
+          .replace(/\t/g, ' ')  // إزالة علامات التبويب
+          .replace(/\\/g, '\\\\')  // تهرب من الشرطة المائلة العكسية
+          .replace(/"\s*:\s*"([^"]*?)"/g, (match, p1) => {
+            // تهرب من علامات الاقتباس داخل القيم النصية
+            return `":"${p1.replace(/"/g, '\\"')}"`;
+          });
+        
+        // محاولة أخرى للتحليل
+        try {
+          travelPlanObject = JSON.parse(jsonString);
+        } catch (secondParseError) {
+          console.error("Second JSON parse error:", secondParseError);
+          
+          // إذا فشلت كل المحاولات، قم بإنشاء كائن JSON بسيط
+          travelPlanObject = createFallbackTravelPlan(travelData, generatedText);
+        }
+      }
       
       return travelPlanObject;
     } catch (parseError) {
       console.error("Error parsing JSON:", parseError);
       console.log("Generated text:", generatedText);
-      // إذا فشل التحليل، نعيد النص كما هو
-      return { 
-        rawText: generatedText,
-        error: "فشل في تحليل JSON. يرجى المحاولة مرة أخرى."
-      };
+      
+      // إنشاء خطة سفر بسيطة في حالة الفشل
+      return createFallbackTravelPlan(travelData, generatedText);
     }
     
   } catch (error) {
     console.error("Cohere API Error:", error);
     throw new Error(`فشل في إنشاء خطة السفر: ${error.message}`);
   }
+}
+
+function createFallbackTravelPlan(travelData, generatedText) {
+  // إنشاء خطة سفر بسيطة في حالة الفشل
+  return {
+    overview: {
+      title: `خطة سفر إلى ${travelData.destination}`,
+      description: `وصف موجز لخطة السفر إلى ${travelData.destination}`,
+      highlights: ["ميزة 1", "ميزة 2", "ميزة 3"],
+      bestTimeToVisit: "أفضل وقت للزيارة",
+      language: "اللغة المحلية",
+      currency: "العملة المحلية",
+      timeZone: "المنطقة الزمنية"
+    },
+    accommodation: {
+      recommendations: [
+        {
+          name: "اسم الفندق أو مكان الإقامة",
+          type: "نوع الإقامة (فندق فاخر، فندق متوسط، شقة، إلخ)",
+          priceRange: "نطاق السعر بالدولار",
+          location: "الموقع/المنطقة",
+          features: ["ميزة 1", "ميزة 2"],
+          description: "وصف موجز للإقامة"
+        }
+      ]
+    },
+    dailyPlan: [
+      {
+        day: 1,
+        title: "عنوان لليوم الأول",
+        description: "وصف موجز لخطة اليوم",
+        morning: {
+          activity: "النشاط الصباحي",
+          location: "الموقع",
+          description: "وصف النشاط",
+          cost: "التكلفة التقريبية"
+        },
+        afternoon: {
+          activity: "النشاط المسائي",
+          location: "الموقع",
+          description: "وصف النشاط",
+          cost: "التكلفة التقريبية"
+        },
+        evening: {
+          activity: "النشاط الليلي",
+          location: "الموقع",
+          description: "وصف النشاط",
+          cost: "التكلفة التقريبية"
+        },
+        meals: {
+          breakfast: {
+            recommendation: "اسم المطعم أو نوع الطعام",
+            cost: "التكلفة التقريبية"
+          },
+          lunch: {
+            recommendation: "اسم المطعم أو نوع الطعام",
+            cost: "التكلفة التقريبية"
+          },
+          dinner: {
+            recommendation: "اسم المطعم أو نوع الطعام",
+            cost: "التكلفة التقريبية"
+          }
+        }
+      }
+    ],
+    restaurants: [
+      {
+        name: "اسم المطعم",
+        cuisine: "نوع المطبخ",
+        priceRange: "نطاق السعر",
+        location: "الموقع",
+        specialDishes: ["طبق 1", "طبق 2"],
+        description: "وصف موجز للمطعم"
+      }
+    ],
+    budget: {
+      accommodation: {
+        amount: "المبلغ بالدولار",
+        percentage: "النسبة المئوية من إجمالي الميزانية"
+      },
+      transportation: {
+        amount: "المبلغ بالدولار",
+        percentage: "النسبة المئوية من إجمالي الميزانية"
+      },
+      food: {
+        amount: "المبلغ بالدولار",
+        percentage: "النسبة المئوية من إجمالي الميزانية"
+      },
+      activities: {
+        amount: "المبلغ بالدولار",
+        percentage: "النسبة المئوية من إجمالي الميزانية"
+      },
+      shopping: {
+        amount: "المبلغ بالدولار",
+        percentage: "النسبة المئوية من إجمالي الميزانية"
+      },
+      emergency: {
+        amount: "المبلغ بالدولار",
+        percentage: "النسبة المئوية من إجمالي الميزانية"
+      },
+      total: "إجمالي الميزانية المقدرة بالدولار"
+    },
+    tips: [
+      {
+        category: "الفئة (مثل: الأمان، الطعام، الثقافة، إلخ)",
+        title: "عنوان النصيحة",
+        description: "وصف النصيحة"
+      }
+    ],
+    attractions: [
+      {
+        name: "اسم المعلم السياحي",
+        category: "الفئة (متحف، موقع طبيعي، معلم تاريخي، إلخ)",
+        location: "الموقع",
+        description: "وصف موجز",
+        entryFee: "رسوم الدخول",
+        bestTimeToVisit: "أفضل وقت للزيارة",
+        timeNeeded: "الوقت اللازم للزيارة"
+      }
+    ]
+  };
 }
