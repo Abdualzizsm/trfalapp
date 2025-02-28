@@ -26,9 +26,9 @@ export default async function handler(req, res) {
     
     const genAI = new GoogleGenerativeAI(apiKey);
     
-    // استخدام نموذج Gemini 1.5 Flash للحصول على أداء أفضل
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-    console.log("Using model: gemini-1.5-flash (Updated model for improved performance)");
+    // استخدام نموذج Gemini Pro
+    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+    console.log("Using model: gemini-pro");
     
     // إعداد النص التوجيهي (prompt)
     const prompt = `

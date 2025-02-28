@@ -11,8 +11,8 @@ if (!apiKey) {
 const genAI = new GoogleGenerativeAI(apiKey);
 
 // الحصول على نموذج Gemini Pro
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-console.log("GeminiService - Using model: gemini-1.5-flash (Updated model for improved performance)");
+const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+console.log("GeminiService - Using model: gemini-pro");
 
 /**
  * دالة لإنشاء خطة سفر باستخدام Gemini API
