@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap');
+
 @layer components {
   .ios-button {
     @apply bg-ios-blue text-white font-semibold py-3 px-6 rounded-ios shadow-ios 
@@ -25,6 +27,51 @@
 
 html, body {
   @apply bg-ios-light-gray text-gray-900 min-h-screen;
+  font-family: 'Tajawal', sans-serif;
+  direction: rtl;
+}
+
+/* تحسين عرض المحتوى باللغة العربية */
+.travel-plan-content {
+  font-family: 'Tajawal', sans-serif;
+  line-height: 1.8;
+  font-size: 1.05rem;
+  text-align: right;
+}
+
+.travel-plan-content h1,
+.travel-plan-content h2,
+.travel-plan-content h3 {
+  font-weight: 700;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.travel-plan-content h1 {
+  font-size: 1.8rem;
+}
+
+.travel-plan-content h2 {
+  font-size: 1.5rem;
+}
+
+.travel-plan-content h3 {
+  font-size: 1.3rem;
+}
+
+.travel-plan-content p {
+  margin-bottom: 1rem;
+}
+
+.travel-plan-content ul,
+.travel-plan-content ol {
+  margin-bottom: 1rem;
+  padding-right: 1.5rem;
+}
+
+.travel-plan-content li {
+  margin-bottom: 0.5rem;
 }
 
 /* Animation for iOS-like interactions */

@@ -115,39 +115,41 @@ export default function TravelPlan({ plan, travelData }) {
     }
   };
   
-  // وظيفة لتنسيق النص وإضافة تنسيق HTML مناسب
-  const formatTextWithHeadings = (text) => {
-    if (!text) return null;
+  // عرض محتوى الخطة
+  const renderPlanContent = () => {
+    if (!plan) return <p>لا توجد خطة سفر لعرضها.</p>;
     
-    // تقسيم النص إلى أقسام وفقرات
-    return text
-      .split('\n\n')
-      .map((paragraph, i) => {
-        // إذا كان الفقرة تبدأ بعنوان
-        if (/^#+\s/.test(paragraph)) {
-          const level = paragraph.match(/^(#+)/)[0].length;
-          const title = paragraph.replace(/^#+\s/, '');
-          return React.createElement(
-            `h${Math.min(level + 1, 6)}`,
-            { key: i, className: 'text-xl font-bold mt-6 mb-3 text-gray-800' },
-            title
-          );
-        }
-        
-        // تنسيق العناصر في القوائم
-        if (paragraph.startsWith('- ') || paragraph.startsWith('* ') || /^\d+\.\s/.test(paragraph)) {
-          return (
-            <ul key={i} className="list-disc ml-6 my-3 text-gray-700">
-              {paragraph.split('\n').map((item, j) => (
-                <li key={j} className="mb-1">{item.replace(/^[-*]\s|\d+\.\s/, '')}</li>
-              ))}
-            </ul>
-          );
-        }
-        
-        // تنسيق مقاطع النص العادية
-        return <p key={i} className="my-3 text-gray-700">{paragraph}</p>;
+    // تحويل النص إلى HTML مع الحفاظ على التنسيق
+    const formatContent = (content) => {
+      // تحويل العناوين
+      let formattedContent = content
+        .replace(/## (.*?)(?=\n|$)/g, '<h2>$1</h2>')
+        .replace(/### (.*?)(?=\n|$)/g, '<h3>$1</h3>')
+        .replace(/#### (.*?)(?=\n|$)/g, '<h4>$1</h4>');
+      
+      // تحويل النقاط
+      formattedContent = formattedContent.replace(/- (.*?)(?=\n|$)/g, '<li>$1</li>');
+      
+      // تجميع النقاط في قوائم
+      formattedContent = formattedContent.replace(/<li>.*?<\/li>(\n<li>.*?<\/li>)+/g, (match) => {
+        return '<ul>' + match + '</ul>';
       });
+      
+      // تحويل الفقرات
+      formattedContent = formattedContent.replace(/(?<!\n<[^>]+>)([^\n<].+?)(?=\n|$)/g, '<p>$1</p>');
+      
+      // إزالة الأسطر الفارغة المتكررة
+      formattedContent = formattedContent.replace(/\n\n+/g, '\n');
+      
+      return formattedContent;
+    };
+    
+    return (
+      <div 
+        className="travel-plan-content"
+        dangerouslySetInnerHTML={{ __html: formatContent(plan) }}
+      />
+    );
   };
 
   // وظيفة للتعرف على الأيام في خطة الرحلة وتقسيمها
@@ -304,9 +306,7 @@ export default function TravelPlan({ plan, travelData }) {
               <FaMapMarkedAlt className="ml-2 text-ios-blue" />
               ملخص الرحلة
             </h3>
-            <div>
-              {formatTextWithHeadings(plan?.split('2. تفاصيل الإقامة')[0])}
-            </div>
+            {renderPlanContent()}
           </div>
         )}
         
@@ -316,13 +316,7 @@ export default function TravelPlan({ plan, travelData }) {
               <FaBed className="ml-2 text-ios-blue" />
               تفاصيل الإقامة
             </h3>
-            <div>
-              {formatTextWithHeadings(
-                plan?.includes('2. تفاصيل الإقامة') && plan?.includes('3. خطة يومية مفصلة') 
-                  ? plan.split('2. تفاصيل الإقامة')[1].split('3. خطة يومية مفصلة')[0]
-                  : ''
-              )}
-            </div>
+            {renderPlanContent()}
           </div>
         )}
         
@@ -380,13 +374,7 @@ export default function TravelPlan({ plan, travelData }) {
                 </div>
               ))
             ) : (
-              <div>
-                {formatTextWithHeadings(
-                  plan?.includes('3. خطة يومية مفصلة') && plan?.includes('4. توزيع الميزانية') 
-                    ? plan.split('3. خطة يومية مفصلة')[1].split('4. توزيع الميزانية')[0]
-                    : ''
-                )}
-              </div>
+              {renderPlanContent()}
             )}
           </div>
         )}
@@ -397,13 +385,7 @@ export default function TravelPlan({ plan, travelData }) {
               <FaTags className="ml-2 text-ios-blue" />
               توزيع الميزانية
             </h3>
-            <div>
-              {formatTextWithHeadings(
-                plan?.includes('4. توزيع الميزانية') && plan?.includes('5. نصائح مفيدة') 
-                  ? plan.split('4. توزيع الميزانية')[1].split('5. نصائح مفيدة')[0]
-                  : ''
-              )}
-            </div>
+            {renderPlanContent()}
           </div>
         )}
         
@@ -413,13 +395,7 @@ export default function TravelPlan({ plan, travelData }) {
               <FaLightbulb className="ml-2 text-ios-blue" />
               نصائح مفيدة
             </h3>
-            <div>
-              {formatTextWithHeadings(
-                plan?.includes('5. نصائح مفيدة')
-                  ? plan.split('5. نصائح مفيدة')[1]
-                  : ''
-              )}
-            </div>
+            {renderPlanContent()}
           </div>
         )}
       </div>
