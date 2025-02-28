@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   env: {
-    GEMINI_API_KEY: process.env.GEMINI_API_KEY,
+    COHERE_API_KEY: process.env.COHERE_API_KEY,
     UNSPLASH_ACCESS_KEY: process.env.UNSPLASH_ACCESS_KEY,
   },
   // إعدادات إضافية لتحسين الأداء
