@@ -374,7 +374,7 @@ export default function TravelPlan({ plan, travelData }) {
                 </div>
               ))
             ) : (
-              {renderPlanContent()}
+              renderPlanContent()
             )}
           </div>
         )}
