@@ -1,14 +1,18 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 // تهيئة API بمفتاح API المخزن 
-const apiKey = process.env.GEMINI_API_KEY || "AIzaSyBiQN8UfRfH8M-IWGd-Nt_xSPZkTwqMWvs";
-console.log("GeminiService - Using API Key:", apiKey.substring(0, 5) + "...");
+const apiKey = process.env.GEMINI_API_KEY;
+console.log("GeminiService - Using API Key:", apiKey ? (apiKey.substring(0, 5) + "...") : "Not provided");
+
+if (!apiKey) {
+  console.error("GEMINI_API_KEY is not set in environment variables");
+}
 
 const genAI = new GoogleGenerativeAI(apiKey);
 
 // الحصول على نموذج Gemini Pro
-const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-console.log("GeminiService - Using model: gemini-pro");
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+console.log("GeminiService - Using model: gemini-1.5-flash (Updated model for improved performance)");
 
 /**
  * دالة لإنشاء خطة سفر باستخدام Gemini API

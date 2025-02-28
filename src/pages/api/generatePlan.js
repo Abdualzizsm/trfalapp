@@ -15,12 +15,18 @@ export default async function handler(req, res) {
     }
     
     // تهيئة API باستخدام مفتاح API
-    const apiKey = process.env.GEMINI_API_KEY || "AIzaSyBiQN8UfRfH8M-IWGd-Nt_xSPZkTwqMWvs";
-    console.log("Using API Key:", apiKey.substring(0, 5) + "...");
+    const apiKey = process.env.GEMINI_API_KEY;
+    
+    if (!apiKey) {
+      console.error("GEMINI_API_KEY is not set in environment variables");
+      return res.status(500).json({ error: 'API key not configured' });
+    }
+    
+    console.log("Using API Key:", apiKey ? (apiKey.substring(0, 5) + "...") : "Not provided");
     
     const genAI = new GoogleGenerativeAI(apiKey);
     
-    // استخدام النموذج gemini-1.5-flash
+    // استخدام نموذج Gemini 1.5 Flash للحصول على أداء أفضل
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
     console.log("Using model: gemini-1.5-flash (Updated model for improved performance)");
     
