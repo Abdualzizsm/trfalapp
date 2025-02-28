@@ -143,11 +143,53 @@ export default function TravelPlan({ plan, travelData }) {
       
       return formattedContent;
     };
+
+    // استخراج القسم المناسب من الخطة بناءً على التبويب النشط
+    let contentSection = '';
+    
+    if (activeTab === 'summary') {
+      // استخراج قسم نظرة عامة على الوجهة
+      if (plan.includes('## 1. نظرة عامة على الوجهة')) {
+        contentSection = plan.split('## 1. نظرة عامة على الوجهة')[1].split('## 2. تفاصيل الإقامة')[0];
+      } else if (plan.includes('نظرة عامة على الوجهة')) {
+        contentSection = plan.split('نظرة عامة على الوجهة')[1].split('تفاصيل الإقامة')[0];
+      } else {
+        contentSection = plan.split('\n\n')[0] + '\n\n' + plan.split('\n\n')[1];
+      }
+    } else if (activeTab === 'accommodation') {
+      // استخراج قسم تفاصيل الإقامة
+      if (plan.includes('## 2. تفاصيل الإقامة')) {
+        contentSection = plan.split('## 2. تفاصيل الإقامة')[1].split('## 3. جدول يومي مفصل للأنشطة')[0];
+      } else if (plan.includes('تفاصيل الإقامة')) {
+        contentSection = plan.split('تفاصيل الإقامة')[1].split('جدول يومي مفصل للأنشطة')[0];
+      }
+    } else if (activeTab === 'itinerary') {
+      // استخراج قسم الجدول اليومي
+      if (plan.includes('## 3. جدول يومي مفصل للأنشطة')) {
+        contentSection = plan.split('## 3. جدول يومي مفصل للأنشطة')[1].split('## 4. توصيات للمطاعم')[0];
+      } else if (plan.includes('جدول يومي مفصل للأنشطة')) {
+        contentSection = plan.split('جدول يومي مفصل للأنشطة')[1].split('توصيات للمطاعم')[0];
+      }
+    } else if (activeTab === 'budget') {
+      // استخراج قسم الميزانية
+      if (plan.includes('## 5. تقدير تفصيلي للتكاليف')) {
+        contentSection = plan.split('## 5. تقدير تفصيلي للتكاليف')[1].split('## 6. نصائح مهمة للسفر')[0];
+      } else if (plan.includes('تقدير تفصيلي للتكاليف')) {
+        contentSection = plan.split('تقدير تفصيلي للتكاليف')[1].split('نصائح مهمة للسفر')[0];
+      }
+    } else if (activeTab === 'tips') {
+      // استخراج قسم النصائح
+      if (plan.includes('## 6. نصائح مهمة للسفر')) {
+        contentSection = plan.split('## 6. نصائح مهمة للسفر')[1];
+      } else if (plan.includes('نصائح مهمة للسفر')) {
+        contentSection = plan.split('نصائح مهمة للسفر')[1];
+      }
+    }
     
     return (
       <div 
         className="travel-plan-content"
-        dangerouslySetInnerHTML={{ __html: formatContent(plan) }}
+        dangerouslySetInnerHTML={{ __html: formatContent(contentSection) }}
       />
     );
   };
@@ -326,50 +368,26 @@ export default function TravelPlan({ plan, travelData }) {
               <FaCalendarDay className="ml-2 text-ios-blue" />
               البرنامج اليومي
             </h3>
-            
-            {days.length > 0 ? (
+            {days && days.length > 0 ? (
               days.map((day, index) => (
-                <div key={index} className="mb-8 ios-card">
-                  <h4 className="text-lg font-bold mb-3 text-ios-blue">{day.title}</h4>
-                  
-                  <div className="border-r-4 border-ios-blue pr-4">
-                    {day.content.includes('الصباح') && (
-                      <div className="mb-4">
-                        <h5 className="font-bold text-gray-800 mb-2 flex items-center">
-                          <FaSun className="ml-2 text-yellow-500" />
-                          الصباح
-                        </h5>
-                        <div className="text-gray-700">
-                          {day.content.split('الصباح:')[1]?.split('الظهيرة:')[0] || 
-                           day.content.split('الصباح')[1]?.split('الظهيرة')[0]}
-                        </div>
-                      </div>
-                    )}
-                    
-                    {day.content.includes('الظهيرة') && (
-                      <div className="mb-4">
-                        <h5 className="font-bold text-gray-800 mb-2 flex items-center">
-                          <FaUtensils className="ml-2 text-orange-500" />
-                          الظهيرة
-                        </h5>
-                        <div className="text-gray-700">
-                          {day.content.split('الظهيرة:')[1]?.split('المساء:')[0] || 
-                           day.content.split('الظهيرة')[1]?.split('المساء')[0]}
-                        </div>
-                      </div>
-                    )}
-                    
-                    {day.content.includes('المساء') && (
-                      <div>
-                        <h5 className="font-bold text-gray-800 mb-2 flex items-center">
-                          <FaMoon className="ml-2 text-indigo-500" />
-                          المساء
-                        </h5>
-                        <div className="text-gray-700">
-                          {day.content.split('المساء:')[1] || day.content.split('المساء')[1]}
-                        </div>
-                      </div>
-                    )}
+                <div key={index} className="mb-6 ios-card">
+                  <div className="flex justify-between items-center mb-3">
+                    <h4 className="text-lg font-bold text-ios-blue">
+                      اليوم {index + 1}
+                    </h4>
+                    <div className="flex space-x-2 space-x-reverse">
+                      <span className="bg-ios-light-gray text-gray-600 px-3 py-1 rounded-full text-sm flex items-center">
+                        <FaSun className="ml-1 text-yellow-500" />
+                        صباحًا
+                      </span>
+                      <span className="bg-ios-light-gray text-gray-600 px-3 py-1 rounded-full text-sm flex items-center">
+                        <FaMoon className="ml-1 text-indigo-500" />
+                        مساءً
+                      </span>
+                    </div>
+                  </div>
+                  <div className="text-gray-700">
+                    {day}
                   </div>
                 </div>
               ))
