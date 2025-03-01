@@ -1,11 +1,14 @@
 import { useState } from 'react';
-import { FaBed, FaCalendarDay, FaMoneyBillWave, FaInfoCircle, FaPlane } from 'react-icons/fa';
+import { FaBed, FaCalendarDay, FaMoneyBillWave, FaInfoCircle, FaPlane, FaLightbulb } from 'react-icons/fa';
 import TravelPlanHeader from './TravelPlanHeader';
 import AccommodationSection from './AccommodationSection';
 import DailyPlanSection from './DailyPlanSection';
 import BudgetSection from './BudgetSection';
+import EnhancePlanButton from './EnhancePlanButton';
+import SuggestedActivities from './SuggestedActivities';
+import TravelAssistant from './TravelAssistant';
 
-export default function TravelPlan({ plan }) {
+export default function TravelPlan({ plan, travelData, onUpdatePlan }) {
   const [activeTab, setActiveTab] = useState('overview');
 
   // التحقق من وجود خطة سفر صالحة
@@ -37,6 +40,9 @@ export default function TravelPlan({ plan }) {
   return (
     <div className="ios-card">
       <TravelPlanHeader plan={plan} />
+      
+      {/* زر تحسين الخطة باستخدام OpenAI */}
+      <EnhancePlanButton travelPlan={plan} onEnhancedPlan={onUpdatePlan} />
       
       <div className="border-b mb-6">
         <nav className="flex overflow-x-auto hide-scrollbar">
@@ -94,6 +100,17 @@ export default function TravelPlan({ plan }) {
           >
             <FaMoneyBillWave className="ml-1 inline-block" />
             الميزانية
+          </button>
+          <button
+            onClick={() => setActiveTab('suggestions')}
+            className={`px-4 py-2 border-b-2 font-medium text-sm whitespace-nowrap ${
+              activeTab === 'suggestions'
+                ? 'border-ios-blue text-ios-blue'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            }`}
+          >
+            <FaLightbulb className="ml-1 inline-block" />
+            اقتراحات
           </button>
         </nav>
       </div>
@@ -178,7 +195,14 @@ export default function TravelPlan({ plan }) {
         {activeTab === 'budget' && (
           <BudgetSection budget={plan.budget} />
         )}
+        
+        {activeTab === 'suggestions' && (
+          <SuggestedActivities travelData={travelData} />
+        )}
       </div>
+      
+      {/* مساعد السفر الذكي */}
+      <TravelAssistant travelPlan={plan} />
     </div>
   );
 }
