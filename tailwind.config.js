@@ -1,29 +1,25 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
-    './src/components/**/*.{js,ts,jsx,tsx,mdx}',
-    './src/app/**/*.{js,ts,jsx,tsx,mdx}',
+    "./src/pages/**/*.{js,ts,jsx,tsx}",
+    "./src/components/**/*.{js,ts,jsx,tsx}",
+    "./src/app/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {
       colors: {
-        'ios-blue': '#007AFF',
-        'ios-gray': '#8E8E93',
-        'ios-light-gray': '#F2F2F7',
-        'ios-red': '#FF3B30',
-        'ios-green': '#34C759',
+        'ios-blue': '#007aff',
+        'ios-light-blue': '#e9f0ff',
+        'ios-green': '#34c759',
+        'ios-red': '#ff3b30',
+        'ios-yellow': '#ffcc00',
+        'ios-gray': '#8e8e93',
+        'ios-light-gray': '#f2f2f7',
       },
       fontFamily: {
-        sans: ['SF Pro Display', 'Helvetica Neue', 'Arial', 'sans-serif'],
+        'arabic': ['Tajawal', 'sans-serif'],
       },
-      borderRadius: {
-        'ios': '13px',
-      },
-      boxShadow: {
-        'ios': '0 4px 8px rgba(0, 0, 0, 0.05)',
-      }
     },
   },
   plugins: [],
-}
+};

@@ -1,76 +1,40 @@
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap');
-
-@layer components {
-  .ios-button {
-    @apply bg-ios-blue text-white font-semibold py-3 px-6 rounded-ios shadow-ios 
-           active:bg-blue-600 transition-all duration-200;
-  }
-  
-  .ios-input {
-    @apply bg-ios-light-gray border-0 rounded-ios px-4 py-3 
-           text-gray-700 focus:outline-none focus:ring-2 focus:ring-ios-blue;
-  }
-  
-  .ios-card {
-    @apply bg-white rounded-ios shadow-ios p-6 mb-4;
-  }
-  
-  .ios-switch {
-    @apply relative inline-flex h-6 w-11 items-center rounded-full
-           transition-colors duration-200 ease-in-out focus:outline-none;
-  }
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-rgb: 248, 250, 252;
 }
 
-html, body {
-  @apply bg-ios-light-gray text-gray-900 min-h-screen;
+body {
+  color: rgb(var(--foreground-rgb));
+  background: rgb(var(--background-rgb));
   font-family: 'Tajawal', sans-serif;
+}
+
+/* تنسيقات عامة */
+.rtl {
   direction: rtl;
 }
 
-/* تحسين عرض المحتوى باللغة العربية */
-.travel-plan-content {
-  font-family: 'Tajawal', sans-serif;
-  line-height: 1.8;
-  font-size: 1.05rem;
+.ltr {
+  direction: ltr;
+}
+
+.text-right {
   text-align: right;
 }
 
-.travel-plan-content h1,
-.travel-plan-content h2,
-.travel-plan-content h3 {
+.text-left {
+  text-align: left;
+}
+
+/* تنسيقات العناوين */
+h1, h2, h3, h4, h5, h6 {
   font-weight: 700;
-  margin-top: 1.5rem;
-  margin-bottom: 1rem;
-  color: #333;
-}
-
-.travel-plan-content h1 {
-  font-size: 1.8rem;
-}
-
-.travel-plan-content h2 {
-  font-size: 1.5rem;
-}
-
-.travel-plan-content h3 {
-  font-size: 1.3rem;
-}
-
-.travel-plan-content p {
-  margin-bottom: 1rem;
-}
-
-.travel-plan-content ul,
-.travel-plan-content ol {
-  margin-bottom: 1rem;
-  padding-right: 1.5rem;
-}
-
-.travel-plan-content li {
   margin-bottom: 0.5rem;
 }
 
@@ -129,31 +93,33 @@ html, body {
   background-color: #2db84c;
 }
 
-/* Animation for iOS-like interactions */
+/* تنسيقات الانتقالات */
 .ios-transition {
   transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
-/* Mimicking iOS slider */
-input[type="range"] {
-  @apply h-2 bg-ios-light-gray rounded-full appearance-none;
+/* تنسيقات منتقي التاريخ */
+.react-datepicker-wrapper {
+  width: 100%;
 }
 
-input[type="range"]::-webkit-slider-thumb {
-  @apply appearance-none w-6 h-6 rounded-full bg-white border-2 border-ios-blue;
-}
-
-/* Date picker iOS style */
 .react-datepicker {
-  @apply font-sans border-0 shadow-ios rounded-ios overflow-hidden;
+  font-family: 'Tajawal', sans-serif !important;
+  border-radius: 12px !important;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+  border: none !important;
 }
 
 .react-datepicker__header {
-  @apply bg-ios-light-gray border-b-0;
+  background-color: #f2f2f7 !important;
+  border-bottom: none !important;
 }
 
 .react-datepicker__day--selected {
-  @apply bg-ios-blue text-white rounded-full;
+  background-color: #007aff !important;
+  color: white !important;
+  border-radius: 50% !important;
 }
 
 /* تنسيقات الألوان */
@@ -177,4 +143,62 @@ input[type="range"]::-webkit-slider-thumb {
 
 .bg-ios-light-gray {
   background-color: var(--ios-light-gray);
+}
+
+/* تنسيقات خاصة بالجوال */
+@media (max-width: 640px) {
+  .ios-card {
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+  
+  .ios-button {
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+  
+  h1 {
+    font-size: 1.5rem;
+  }
+  
+  h2 {
+    font-size: 1.25rem;
+  }
+}
+
+/* تنسيقات لإصلاح مشكلات RTL في المتصفحات */
+[dir="rtl"] .react-datepicker__navigation--previous {
+  left: auto;
+  right: 10px;
+}
+
+[dir="rtl"] .react-datepicker__navigation--next {
+  right: auto;
+  left: 10px;
+}
+
+/* تنسيقات للشاشات الصغيرة */
+.mobile-container {
+  max-width: 100%;
+  padding: 0 12px;
+}
+
+@media (min-width: 640px) {
+  .mobile-container {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 0 16px;
+  }
+}
+
+/* تنسيقات لعرض JSON */
+.json-view {
+  direction: ltr;
+  text-align: left;
+  font-family: monospace;
+  white-space: pre-wrap;
+  background-color: #f5f5f5;
+  padding: 12px;
+  border-radius: 8px;
+  overflow-x: auto;
 }
