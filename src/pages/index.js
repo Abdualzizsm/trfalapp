@@ -9,7 +9,8 @@ import { FaPlane, FaMapMarkedAlt, FaCalendarAlt, FaUsers, FaMoneyBillWave } from
 export default function Home() {
   const [travelPlan, setTravelPlan] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState(false);
+  const [showForm, setShowForm] = useState(true);
 
   const handleFormSubmit = async (formData) => {
     setLoading(true);
@@ -31,12 +32,18 @@ export default function Home() {
 
       const data = await response.json();
       setTravelPlan(data);
+      setShowForm(false); // إخفاء النموذج بعد نجاح إنشاء الخطة
     } catch (err) {
       console.error('Error generating travel plan:', err);
       setError(err.message || 'حدث خطأ أثناء إنشاء خطة السفر');
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleBackToForm = () => {
+    setShowForm(true);
+    setTravelPlan(null);
   };
 
   return (
@@ -52,20 +59,32 @@ export default function Home() {
           <p className="text-gray-600">مخطط رحلاتك الذكي باستخدام الذكاء الاصطناعي</p>
         </header>
 
-        <div className="ios-card mb-8">
-          <h2 className="text-xl font-bold mb-4 flex items-center">
-            <FaPlane className="ml-2 text-ios-blue" />
-            أدخل تفاصيل رحلتك
-          </h2>
-          <TravelForm onSubmit={handleFormSubmit} />
-        </div>
-
-        {loading && <LoadingSpinner message="جاري إنشاء خطة السفر..." />}
+        {loading && <LoadingSpinner message="جاري إنشاء خطة السفر... (قد تستغرق العملية حتى دقيقة واحدة)" />}
         
         {error && <ErrorMessage message={error} onRetry={() => setError(null)} />}
         
-        {travelPlan && !loading && !error && (
-          <TravelPlan plan={travelPlan} />
+        {showForm && !loading && (
+          <div className="ios-card mb-8">
+            <h2 className="text-xl font-bold mb-4 flex items-center">
+              <FaPlane className="ml-2 text-ios-blue" />
+              أدخل تفاصيل رحلتك
+            </h2>
+            <TravelForm onSubmit={handleFormSubmit} />
+          </div>
+        )}
+        
+        {travelPlan && !loading && !error && !showForm && (
+          <>
+            <div className="mb-4">
+              <button 
+                onClick={handleBackToForm}
+                className="bg-ios-blue text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition duration-300"
+              >
+                العودة إلى النموذج
+              </button>
+            </div>
+            <TravelPlan plan={travelPlan} />
+          </>
         )}
 
         <footer className="mt-12 text-center text-gray-500 text-sm">

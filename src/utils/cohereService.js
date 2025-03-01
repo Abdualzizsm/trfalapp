@@ -171,6 +171,7 @@ export async function createTravelPlan(travelData) {
     try {
       // استخراج JSON من النص (في حالة وجود نص إضافي)
       const jsonMatch = generatedText.match(/```json\s*([\s\S]*?)\s*```/) || 
+                        generatedText.match(/```\s*([\s\S]*?)\s*```/) ||
                         generatedText.match(/\{[\s\S]*\}/);
       
       let jsonString = jsonMatch ? jsonMatch[1] || jsonMatch[0] : generatedText;
@@ -181,27 +182,38 @@ export async function createTravelPlan(travelData) {
         .replace(/,\s*]/g, ']')  // إزالة الفواصل الزائدة قبل الأقواس المربعة المغلقة
         .replace(/(['"])?([a-zA-Z0-9_]+)(['"])?:/g, '"$2":')  // تأكد من أن جميع المفاتيح بين علامات اقتباس مزدوجة
         .replace(/:\s*(['"])([^'"]*?)(['"])\s*([,}])/g, ':"$2"$4')  // تأكد من أن جميع القيم النصية بين علامات اقتباس مزدوجة
-        .replace(/:\s*'([^']*)'\s*([,}])/g, ':"$1"$2');  // تحويل علامات الاقتباس الفردية إلى مزدوجة
+        .replace(/:\s*'([^']*)'\s*([,}])/g, ':"$1"$2')  // تحويل علامات الاقتباس الفردية إلى مزدوجة
+        .replace(/\n/g, ' ')  // إزالة أسطر جديدة
+        .replace(/\r/g, ' ')  // إزالة أسطر جديدة
+        .replace(/\t/g, ' ')  // إزالة علامات التبويب
+        .replace(/\\/g, '\\\\')  // تهرب من الشرطة المائلة العكسية
+        .replace(/"\s*:\s*"([^"]*?)"/g, (match, p1) => {
+          // تهرب من علامات الاقتباس داخل القيم النصية
+          return `":"${p1.replace(/"/g, '\\"')}"`;
+        });
       
       console.log("Cleaned JSON string:", jsonString.substring(0, 200) + "...");
       
       // محاولة تحليل JSON
       let travelPlanObject;
       try {
+        // تأكد من أن النص يبدأ وينتهي بأقواس صحيحة
+        if (!jsonString.trim().startsWith('{')) {
+          jsonString = '{' + jsonString.substring(jsonString.indexOf('"overview"'));
+        }
+        if (!jsonString.trim().endsWith('}')) {
+          jsonString = jsonString.substring(0, jsonString.lastIndexOf('}') + 1);
+        }
+        
         travelPlanObject = JSON.parse(jsonString);
       } catch (parseError) {
         console.error("First JSON parse error:", parseError);
         
         // محاولة إصلاح بعض الأخطاء الشائعة
         jsonString = jsonString
-          .replace(/\n/g, ' ')  // إزالة أسطر جديدة
-          .replace(/\r/g, ' ')  // إزالة أسطر جديدة
-          .replace(/\t/g, ' ')  // إزالة علامات التبويب
-          .replace(/\\/g, '\\\\')  // تهرب من الشرطة المائلة العكسية
-          .replace(/"\s*:\s*"([^"]*?)"/g, (match, p1) => {
-            // تهرب من علامات الاقتباس داخل القيم النصية
-            return `":"${p1.replace(/"/g, '\\"')}"`;
-          });
+          .replace(/([{,]\s*)([^"}\s]+)\s*:/g, '$1"$2":')  // إضافة علامات اقتباس للمفاتيح
+          .replace(/:\s*([^",{\[\s][^,}\]]*?)([,}])/g, ':"$1"$2')  // إضافة علامات اقتباس للقيم
+          .replace(/,\s*([}\]])/g, '$1');  // إزالة الفواصل قبل الأقواس المغلقة
         
         // محاولة أخرى للتحليل
         try {
