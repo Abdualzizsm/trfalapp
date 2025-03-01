@@ -1,4 +1,4 @@
-import '../styles/globals.css?v=1'
+import '../styles/globals.css?v=4'
 import Head from 'next/head'
 import { Tajawal } from 'next/font/google'
 

@@ -7,14 +7,13 @@ import OpenAI from "openai";
 function createOpenAIClient() {
   try {
     // التحقق من وجود مفتاح API
-    if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY.startsWith('ghp_')) {
+    if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY.startsWith('sk_test') || process.env.OPENAI_API_KEY.startsWith('ghp_')) {
       console.warn('مفتاح OpenAI API غير موجود أو غير صالح. سيتم استخدام بيانات وهمية للاختبار.');
       return null;
     }
 
     // إنشاء عميل OpenAI
     return new OpenAI({
-      baseURL: "https://models.inference.ai.azure.com",
       apiKey: process.env.OPENAI_API_KEY
     });
   } catch (error) {
@@ -145,15 +144,15 @@ function getMockTravelPlan(destination) {
  * @returns {Promise<Object>} - خطة السفر
  */
 export async function createTravelPlan(travelData) {
+  const openai = createOpenAIClient();
+  
+  // إذا كان عميل OpenAI غير متوفر، استخدم بيانات وهمية للاختبار
+  if (!openai) {
+    console.log('استخدام بيانات وهمية لخطة السفر');
+    return generateMockTravelPlan(travelData);
+  }
+
   try {
-    const client = createOpenAIClient();
-    
-    // استخدام بيانات وهمية إذا لم يكن هناك عميل OpenAI
-    if (!client) {
-      console.log("استخدام بيانات وهمية للاختبار المحلي");
-      return getMockTravelPlan(travelData.destination);
-    }
-    
     // إنشاء نص التوجيه
     const prompt = `أريد منك إنشاء خطة سفر كاملة بتنسيق JSON حسب الهيكل التالي بالضبط:
 {
@@ -281,7 +280,7 @@ export async function createTravelPlan(travelData) {
 5. أعد الخطة بتنسيق JSON فقط، بدون أي نص إضافي.`;
 
     // استدعاء OpenAI API
-    const response = await client.chat.completions.create({
+    const response = await openai.chat.completions.create({
       messages: [
         { role: "system", content: "أنت مخطط سفر متخصص يقدم خطط سفر مفصلة ومخصصة بتنسيق JSON." },
         { role: "user", content: prompt }
@@ -336,8 +335,74 @@ export async function createTravelPlan(travelData) {
   } catch (error) {
     console.error("Error creating travel plan with OpenAI:", error);
     // في حالة الخطأ، استخدم البيانات الوهمية
-    return getMockTravelPlan(travelData.destination);
+    return generateMockTravelPlan(travelData);
   }
+}
+
+// توليد بيانات وهمية لخطة السفر للاختبار
+function generateMockTravelPlan(travelData) {
+  return {
+    destination: travelData.destination,
+    duration: travelData.duration || 7,
+    startDate: travelData.startDate,
+    endDate: travelData.endDate,
+    travelers: travelData.travelers,
+    budget: travelData.budget,
+    overview: {
+      description: `رحلة رائعة إلى ${travelData.destination} لمدة ${travelData.duration || 7} أيام. هذه بيانات تجريبية نظرًا لعدم وجود مفتاح OpenAI API صالح.`,
+      highlights: [
+        "استكشاف المعالم السياحية الشهيرة",
+        "تجربة المأكولات المحلية اللذيذة",
+        "الاستمتاع بتجارب ثقافية فريدة"
+      ],
+      bestTimeToVisit: "يعتمد على وجهتك المختارة",
+      language: "اللغة المحلية للوجهة"
+    },
+    dailyPlan: Array.from({ length: (travelData.duration || 7) }, (_, i) => ({
+      day: i + 1,
+      activities: [
+        { time: "09:00", description: "الإفطار في المطعم المحلي" },
+        { time: "10:30", description: "زيارة معلم سياحي" },
+        { time: "13:00", description: "الغداء في مطعم مشهور" },
+        { time: "15:00", description: "وقت حر للتسوق أو الراحة" },
+        { time: "19:00", description: "العشاء والاستمتاع بالترفيه المسائي" }
+      ]
+    })),
+    accommodation: {
+      recommendations: [
+        {
+          name: "فندق فاخر",
+          description: "خيار فاخر مع إطلالات رائعة",
+          priceRange: "مرتفع"
+        },
+        {
+          name: "فندق متوسط المستوى",
+          description: "خيار مريح بسعر معقول",
+          priceRange: "متوسط"
+        },
+        {
+          name: "نزل اقتصادي",
+          description: "خيار ميزانية ممتاز للمسافرين الاقتصاديين",
+          priceRange: "منخفض"
+        }
+      ]
+    },
+    budget: {
+      estimated: travelData.budget,
+      breakdown: {
+        accommodation: Math.round(travelData.budget * 0.4),
+        food: Math.round(travelData.budget * 0.2),
+        activities: Math.round(travelData.budget * 0.15),
+        transportation: Math.round(travelData.budget * 0.15),
+        shopping: Math.round(travelData.budget * 0.1)
+      },
+      tips: [
+        "احجز رحلتك مبكرًا للحصول على أفضل الأسعار",
+        "استخدم وسائل النقل العام لتوفير المال",
+        "ابحث عن خيارات تناول الطعام المحلية غير السياحية"
+      ]
+    }
+  };
 }
 
 /**

@@ -51,7 +51,7 @@ export default function TravelPlan({ plan }) {
 
   return (
     <div className="mb-6">
-      <TravelPlanHeader plan={plan} />
+      <TravelPlanHeader planData={plan} onBack={() => console.log('Back button clicked')} />
       
       {/* وصف الخطة */}
       <div className="bg-white p-5 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-300">

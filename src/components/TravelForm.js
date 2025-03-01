@@ -98,20 +98,29 @@ export default function TravelForm({ onSubmit }) {
     setTouched(allTouched);
     
     if (validateForm()) {
-      onSubmit(formData);
+      // إضافة مدة الرحلة بشكل صريح
+      const submissionData = {
+        ...formData,
+        duration: durationDays // إضافة مدة الرحلة المحسوبة
+      };
+      onSubmit(submissionData);
     }
   };
 
   return (
-    <div className="ios-card">
-      <h2 className="text-xl font-semibold mb-4 text-center">خطط رحلتك الآن</h2>
-      
-      <form onSubmit={handleSubmit}>
-        <div className="space-y-4">
-          {/* وجهة السفر */}
-          <div>
-            <label htmlFor="destination" className="ios-label">
-              <FaMapMarkerAlt className="inline-block ml-1" /> وجهة السفر
+    <div className="card my-4">
+      <div className="card-header flex-between">
+        <h2 className="font-medium">خطط رحلتك الآن</h2>
+        <div className="badge badge-blue">
+          <FaPaperPlane className="ml-1" />
+          أدخل تفاصيل رحلتك
+        </div>
+      </div>
+      <div className="card-body">
+        <form onSubmit={handleSubmit} className="travel-form">
+          <div className="form-group">
+            <label htmlFor="destination" className="form-label">
+              <FaMapMarkerAlt className="inline-block ml-1 text-primary" /> وجهة السفر
             </label>
             <input
               type="text"
@@ -120,19 +129,17 @@ export default function TravelForm({ onSubmit }) {
               value={formData.destination}
               onChange={handleChange}
               placeholder="مثال: دبي، باريس، طوكيو"
-              className="ios-input"
-              dir="rtl"
+              className={`form-input ${touched.destination && errors.destination ? 'error' : ''}`}
             />
             {touched.destination && errors.destination && (
-              <p className="text-red-500 text-sm mt-1">{errors.destination}</p>
+              <div className="form-error">{errors.destination}</div>
             )}
           </div>
-          
-          {/* تاريخ البداية والنهاية */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="startDate" className="ios-label">
-                <FaCalendarAlt className="inline-block ml-1" /> تاريخ البداية
+
+          <div className="flex flex-wrap -mx-2">
+            <div className="w-1/2 px-2 form-group">
+              <label htmlFor="startDate" className="form-label">
+                <FaCalendarAlt className="inline-block ml-1 text-primary" /> تاريخ البداية
               </label>
               <DatePicker
                 selected={formData.startDate}
@@ -141,17 +148,17 @@ export default function TravelForm({ onSubmit }) {
                 startDate={formData.startDate}
                 endDate={formData.endDate}
                 dateFormat="dd/MM/yyyy"
-                className="ios-input"
-                wrapperClassName="w-full"
+                className={`form-input ${touched.startDate && errors.startDate ? 'error' : ''}`}
+                wrapperClassName="date-picker"
               />
               {touched.startDate && errors.startDate && (
-                <p className="text-red-500 text-sm mt-1">{errors.startDate}</p>
+                <div className="form-error">{errors.startDate}</div>
               )}
             </div>
-            
-            <div>
-              <label htmlFor="endDate" className="ios-label">
-                <FaCalendarAlt className="inline-block ml-1" /> تاريخ النهاية
+
+            <div className="w-1/2 px-2 form-group">
+              <label htmlFor="endDate" className="form-label">
+                <FaCalendarAlt className="inline-block ml-1 text-primary" /> تاريخ النهاية
               </label>
               <DatePicker
                 selected={formData.endDate}
@@ -161,20 +168,23 @@ export default function TravelForm({ onSubmit }) {
                 endDate={formData.endDate}
                 minDate={formData.startDate}
                 dateFormat="dd/MM/yyyy"
-                className="ios-input"
-                wrapperClassName="w-full"
+                className={`form-input ${touched.endDate && errors.endDate ? 'error' : ''}`}
+                wrapperClassName="date-picker"
               />
               {touched.endDate && errors.endDate && (
-                <p className="text-red-500 text-sm mt-1">{errors.endDate}</p>
+                <div className="form-error">{errors.endDate}</div>
               )}
             </div>
           </div>
-          
-          {/* عدد المسافرين والميزانية */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="travelers" className="ios-label">
-                <FaUsers className="inline-block ml-1" /> عدد المسافرين
+
+          <div className="text-center text-sm my-2">
+            مدة الرحلة: <span className="font-medium">{durationDays} يوم</span>
+          </div>
+
+          <div className="flex flex-wrap -mx-2">
+            <div className="w-1/2 px-2 form-group">
+              <label htmlFor="travelers" className="form-label">
+                <FaUsers className="inline-block ml-1 text-primary" /> عدد المسافرين
               </label>
               <input
                 type="number"
@@ -183,16 +193,16 @@ export default function TravelForm({ onSubmit }) {
                 value={formData.travelers}
                 onChange={handleChange}
                 min="1"
-                className="ios-input"
+                className={`form-input ${touched.travelers && errors.travelers ? 'error' : ''}`}
               />
               {touched.travelers && errors.travelers && (
-                <p className="text-red-500 text-sm mt-1">{errors.travelers}</p>
+                <div className="form-error">{errors.travelers}</div>
               )}
             </div>
-            
-            <div>
-              <label htmlFor="budget" className="ios-label">
-                <FaMoneyBillWave className="inline-block ml-1" /> الميزانية ($)
+
+            <div className="w-1/2 px-2 form-group">
+              <label htmlFor="budget" className="form-label">
+                <FaMoneyBillWave className="inline-block ml-1 text-primary" /> الميزانية ($)
               </label>
               <input
                 type="number"
@@ -201,28 +211,19 @@ export default function TravelForm({ onSubmit }) {
                 value={formData.budget}
                 onChange={handleChange}
                 min="0"
-                className="ios-input"
+                className={`form-input ${touched.budget && errors.budget ? 'error' : ''}`}
               />
               {touched.budget && errors.budget && (
-                <p className="text-red-500 text-sm mt-1">{errors.budget}</p>
+                <div className="form-error">{errors.budget}</div>
               )}
             </div>
           </div>
           
-          {/* معلومات الرحلة */}
-          <div className="bg-gray-50 p-3 rounded-lg text-sm text-gray-600 mt-2">
-            <p>مدة الرحلة: <span className="font-semibold">{durationDays} يوم</span></p>
-          </div>
-          
-          {/* زر الإرسال */}
-          <button
-            type="submit"
-            className="ios-button ios-button-primary w-full mt-4"
-          >
+          <button type="submit" className="btn btn-primary w-full mt-4">
             <FaPaperPlane className="ml-2" /> إنشاء خطة السفر
           </button>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
   );
 }

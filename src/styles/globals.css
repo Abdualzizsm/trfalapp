@@ -1,31 +1,290 @@
-@import url('https://fonts.googleapis.com/css2?family=SF+Arabic:wght@400;500;600;700&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-rgb: 248, 250, 252;
-  --ios-blue: 0, 122, 255;
-  --ios-green: 52, 199, 89;
-  --ios-red: 255, 59, 48;
-  --ios-orange: 255, 149, 0;
-  --ios-purple: 175, 82, 222;
-  --ios-gray: 142, 142, 147;
-  --ios-light-gray: 242, 242, 247;
-  --version: 1; /* إضافة متغير نسخة للتأكد من تحديث CSS */
+  /* ألوان رسمية وعصرية */
+  --primary: 0, 84, 166; /* أزرق داكن رسمي */
+  --primary-light: 232, 240, 254;
+  --secondary: 51, 51, 51; /* رمادي داكن */
+  --accent: 255, 127, 0; /* برتقالي */
+  --success: 46, 125, 50; /* أخضر */
+  --info: 2, 136, 209; /* أزرق فاتح */
+  --warning: 237, 108, 2; /* برتقالي داكن */
+  --error: 211, 47, 47; /* أحمر */
+  
+  /* ألوان محايدة */
+  --neutral-50: 250, 250, 250;
+  --neutral-100: 245, 245, 245;
+  --neutral-200: 238, 238, 238;
+  --neutral-300: 224, 224, 224;
+  --neutral-400: 189, 189, 189;
+  --neutral-500: 158, 158, 158;
+  --neutral-600: 117, 117, 117;
+  --neutral-700: 97, 97, 97;
+  --neutral-800: 66, 66, 66;
+  --neutral-900: 33, 33, 33;
+  
+  /* متغيرات واجهة المستخدم */
+  --background: 255, 255, 255;
+  --card-bg: 255, 255, 255;
+  --text: 33, 33, 33;
+  --text-secondary: 97, 97, 97;
+  --border: 224, 224, 224;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+  
+  --header-height: 64px;
+  --footer-height: 64px;
+  --sidebar-width: 280px;
+  --border-radius: 8px;
+  --version: 4; /* زيادة رقم الإصدار للتأكد من تحديث CSS */
+}
+
+/* القواعد الأساسية */
+html, body {
+  overflow-x: hidden;
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: rgb(var(--background-rgb));
-  font-family: 'SF Arabic', 'Tajawal', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: rgb(var(--text));
+  background-color: rgb(var(--neutral-100));
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  line-height: 1.5;
+  min-height: 100vh;
 }
 
-/* تنسيقات عامة */
+/* مكونات واجهة المستخدم */
+@layer components {
+  /* التخطيط */
+  .container {
+    @apply mx-auto px-4 w-full;
+    max-width: 1200px;
+  }
+  
+  .app-container {
+    @apply max-w-md mx-auto bg-white min-h-screen shadow-md;
+  }
+  
+  /* العناوين والنصوص */
+  .heading-1 {
+    @apply text-2xl font-bold mb-4;
+  }
+  
+  .heading-2 {
+    @apply text-xl font-bold mb-3;
+  }
+  
+  .heading-3 {
+    @apply text-lg font-bold mb-2;
+  }
+  
+  .text-sm {
+    @apply text-sm;
+  }
+  
+  .text-xs {
+    @apply text-xs;
+  }
+  
+  /* البطاقات */
+  .card {
+    @apply bg-white rounded-lg shadow-md border border-neutral-200 overflow-hidden;
+  }
+  
+  .card-header {
+    @apply p-4 border-b border-neutral-200 bg-neutral-50 font-medium;
+  }
+  
+  .card-body {
+    @apply p-4;
+  }
+  
+  .card-footer {
+    @apply p-4 border-t border-neutral-200 bg-neutral-50;
+  }
+  
+  /* الأزرار */
+  .btn {
+    @apply inline-flex items-center justify-center px-4 py-2 rounded font-medium transition-colors focus:outline-none;
+  }
+  
+  .btn-primary {
+    @apply bg-blue-600 text-white hover:bg-blue-700;
+    background-color: rgb(var(--primary));
+  }
+  
+  .btn-primary:hover {
+    filter: brightness(0.9);
+  }
+  
+  .btn-outline {
+    @apply border bg-transparent hover:bg-neutral-100;
+    color: rgb(var(--primary));
+    border-color: rgb(var(--primary));
+  }
+  
+  .btn-sm {
+    @apply px-3 py-1 text-sm;
+  }
+  
+  .btn-lg {
+    @apply px-6 py-3 text-lg;
+  }
+  
+  /* النماذج */
+  .form-group {
+    @apply mb-4;
+  }
+  
+  .form-label {
+    @apply block text-sm font-medium mb-1 text-neutral-800 rtl:text-right;
+  }
+  
+  .form-input {
+    @apply w-full px-3 py-2 border border-neutral-300 rounded-md focus:ring-2 focus:ring-primary focus:outline-none;
+  }
+  
+  .form-input.error {
+    @apply border-red-500;
+  }
+  
+  .form-error {
+    @apply text-red-600 text-sm mt-1 rtl:text-right;
+  }
+  
+  /* التبويبات */
+  .tabs {
+    @apply flex border-b border-neutral-200 mb-4;
+  }
+  
+  .tab {
+    @apply px-4 py-2 font-medium text-neutral-600 border-b-2 border-transparent;
+  }
+  
+  .tab:hover {
+    @apply text-neutral-900;
+  }
+  
+  .tab.active {
+    @apply text-blue-600 border-blue-600;
+    color: rgb(var(--primary));
+    border-color: rgb(var(--primary));
+  }
+  
+  /* رسائل الخطأ والتنبيه */
+  .alert {
+    @apply p-4 mb-4 rounded-md;
+  }
+  
+  .alert-info {
+    @apply bg-blue-50 text-blue-800;
+    background-color: rgba(var(--info), 0.1);
+    color: rgb(var(--info));
+  }
+  
+  .alert-success {
+    @apply bg-green-50 text-green-800;
+    background-color: rgba(var(--success), 0.1);
+    color: rgb(var(--success));
+  }
+  
+  .alert-warning {
+    @apply bg-orange-50 text-orange-800;
+    background-color: rgba(var(--warning), 0.1);
+    color: rgb(var(--warning));
+  }
+  
+  .alert-error {
+    @apply bg-red-50 text-red-800;
+    background-color: rgba(var(--error), 0.1);
+    color: rgb(var(--error));
+  }
+  
+  /* مختارات التاريخ */
+  .date-picker .react-datepicker {
+    @apply border-neutral-200 shadow-md rounded-md overflow-hidden;
+    font-family: inherit;
+  }
+  
+  .date-picker .react-datepicker__header {
+    @apply bg-neutral-50 border-neutral-200;
+  }
+  
+  .date-picker .react-datepicker__day--selected {
+    background-color: rgb(var(--primary));
+  }
+  
+  .date-picker .react-datepicker__day:hover {
+    background-color: rgba(var(--primary), 0.1);
+  }
+  
+  /* وحدات واجهة المستخدم الإضافية */
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+  
+  .badge-blue {
+    @apply bg-blue-100 text-blue-800;
+  }
+  
+  .badge-green {
+    @apply bg-green-100 text-green-800;
+  }
+  
+  .badge-red {
+    @apply bg-red-100 text-red-800;
+  }
+  
+  .badge-gray {
+    @apply bg-gray-100 text-gray-800;
+  }
+  
+  /* شريط التنقل */
+  .navbar {
+    @apply flex items-center justify-between px-4 py-3 bg-white shadow;
+    height: var(--header-height);
+  }
+  
+  .navbar-brand {
+    @apply text-xl font-bold;
+    color: rgb(var(--primary));
+  }
+  
+  /* تخطيطات مفيدة */
+  .flex-center {
+    @apply flex items-center justify-center;
+  }
+  
+  .flex-between {
+    @apply flex items-center justify-between;
+  }
+  
+  /* القوائم */
+  .list {
+    @apply divide-y divide-neutral-200;
+  }
+  
+  .list-item {
+    @apply py-3 flex items-center;
+  }
+  
+  /* التحسينات المحمولة */
+  @media (max-width: 640px) {
+    .app-container {
+      @apply shadow-none;
+    }
+    
+    .card {
+      @apply shadow-sm;
+    }
+  }
+}
+
+/* موجهات خاصة بالاتجاه (RTL/LTR) */
 .rtl {
   direction: rtl;
 }
@@ -34,284 +293,7 @@ body {
   direction: ltr;
 }
 
-.text-right {
-  text-align: right;
-}
-
-.text-left {
-  text-align: left;
-}
-
-/* تنسيقات العناوين */
-h1, h2, h3, h4, h5, h6 {
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-  letter-spacing: -0.01em;
-}
-
-/* تنسيقات البطاقات */
-.ios-card {
-  background-color: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.04);
-  padding: 16px;
-  margin-bottom: 12px;
-  border: 1px solid rgba(0, 0, 0, 0.06);
-}
-
-.ios-card-compact {
-  background-color: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
-  padding: 12px;
-  border: 1px solid rgba(0, 0, 0, 0.06);
-}
-
-.ios-card-selected {
-  border-color: rgb(var(--ios-blue));
-  box-shadow: 0 0 0 1px rgba(var(--ios-blue), 0.4);
-}
-
-.ios-card-header {
-  display: flex;
-  align-items: center;
-  padding: 12px 16px;
-  background-color: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.04);
-  margin-bottom: 12px;
-  border: 1px solid rgba(0, 0, 0, 0.06);
-}
-
-/* تنسيقات الأزرار */
-.ios-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px 16px;
-  border-radius: 8px;
-  font-weight: 500;
-  transition: all 0.2s ease;
-  cursor: pointer;
-  background-color: rgb(var(--ios-blue));
-  color: white;
-}
-
-.ios-button:hover {
-  opacity: 0.9;
-}
-
-.ios-button-primary {
-  background-color: rgb(var(--ios-blue));
-  color: white;
-  padding: 10px 16px;
-  border-radius: 8px;
-  font-weight: 500;
-  transition: all 0.2s ease;
-}
-
-.ios-button-primary:hover {
-  opacity: 0.9;
-}
-
-.ios-button-secondary {
-  background-color: rgb(var(--ios-light-gray));
-  color: rgb(var(--ios-blue));
-  padding: 10px 16px;
-  border-radius: 8px;
-  font-weight: 500;
-  transition: all 0.2s ease;
-}
-
-.ios-button-secondary:hover {
-  background-color: rgba(var(--ios-blue), 0.1);
-}
-
-.ios-button-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
-  background-color: rgb(var(--ios-light-gray));
-  color: rgb(var(--ios-blue));
-  transition: all 0.2s ease;
-}
-
-.ios-button-icon:hover {
-  background-color: rgba(var(--ios-blue), 0.1);
-}
-
-.ios-floating-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 50px;
-  height: 50px;
-  border-radius: 25px;
-  background-color: rgb(var(--ios-blue));
-  color: white;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  transition: all 0.2s ease;
-}
-
-.ios-floating-button:hover {
-  transform: scale(1.05);
-  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.15);
-}
-
-.ios-pill {
-  display: inline-flex;
-  align-items: center;
-  padding: 6px 12px;
-  border-radius: 16px;
-  font-size: 0.875rem;
-  font-weight: 500;
-  background-color: rgb(var(--ios-light-gray));
-  color: rgb(var(--ios-gray));
-  white-space: nowrap;
-}
-
-.ios-pill-active {
-  background-color: rgb(var(--ios-blue));
-  color: white;
-}
-
-/* تنسيقات الحقول */
-.ios-input {
+/* يجب أن تكون على مستوى root لتجنب مشكلة النطاق */
+.travel-form .react-datepicker-wrapper {
   width: 100%;
-  padding: 12px;
-  border-radius: 8px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  background-color: rgb(var(--ios-light-gray));
-  transition: all 0.2s ease;
-}
-
-.ios-input:focus {
-  border-color: rgb(var(--ios-blue));
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(var(--ios-blue), 0.2);
-}
-
-.ios-label {
-  display: block;
-  margin-bottom: 6px;
-  font-weight: 500;
-  color: #333;
-}
-
-/* تنسيقات التبويبات */
-.ios-tabs {
-  display: flex;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  margin-bottom: 16px;
-}
-
-.ios-tab {
-  padding: 8px 16px;
-  font-weight: 500;
-  color: rgb(var(--ios-gray));
-  border-bottom: 2px solid transparent;
-  transition: all 0.2s ease;
-}
-
-.ios-tab-active {
-  color: rgb(var(--ios-blue));
-  border-bottom-color: rgb(var(--ios-blue));
-}
-
-/* تنسيقات القوائم */
-.ios-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.ios-list-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 0;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-}
-
-.ios-list-item:last-child {
-  border-bottom: none;
-}
-
-/* تنسيقات الرسائل */
-.ios-message {
-  padding: 12px;
-  border-radius: 8px;
-  background-color: rgb(var(--ios-light-gray));
-  margin-bottom: 12px;
-  text-align: center;
-}
-
-.ios-message-error {
-  background-color: rgba(var(--ios-red), 0.1);
-  color: rgb(var(--ios-red));
-  border: 1px solid rgba(var(--ios-red), 0.2);
-}
-
-.ios-message-success {
-  background-color: rgba(var(--ios-green), 0.1);
-  color: rgb(var(--ios-green));
-  border: 1px solid rgba(var(--ios-green), 0.2);
-}
-
-.ios-message-info {
-  background-color: rgba(var(--ios-blue), 0.1);
-  color: rgb(var(--ios-blue));
-  border: 1px solid rgba(var(--ios-blue), 0.2);
-}
-
-.ios-message-user {
-  background-color: rgba(var(--ios-blue), 0.1);
-  color: rgb(var(--foreground-rgb));
-  padding: 8px 12px;
-  border-radius: 16px;
-  border-top-right-radius: 4px;
-  max-width: 80%;
-}
-
-.ios-message-assistant {
-  background-color: rgb(var(--ios-light-gray));
-  color: rgb(var(--foreground-rgb));
-  padding: 8px 12px;
-  border-radius: 16px;
-  border-top-left-radius: 4px;
-  max-width: 80%;
-}
-
-/* تنسيقات إضافية */
-.ios-scrollview-x {
-  overflow-x: auto;
-  overflow-y: hidden;
-  white-space: nowrap;
-  -webkit-overflow-scrolling: touch;
-  padding-bottom: 4px;
-}
-
-.hide-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-
-.hide-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-/* تنسيقات للهواتف فقط */
-@media (max-width: 768px) {
-  .container {
-    padding-left: 16px;
-    padding-right: 16px;
-  }
-  
-  .ios-card {
-    padding: 14px;
-    margin-bottom: 10px;
-  }
 }

@@ -1,10 +1,9 @@
 import { useState } from 'react';
 import { FaBed, FaCalendarDay, FaMoneyBillWave, FaInfoCircle, FaPlane, FaLightbulb } from 'react-icons/fa';
 import TravelPlanHeader from './TravelPlanHeader';
-import AccommodationSection from './AccommodationSection';
 import DailyPlanSection from './DailyPlanSection';
+import AccommodationSection from './AccommodationSection';
 import BudgetSection from './BudgetSection';
-import EnhancePlanButton from './EnhancePlanButton';
 import SuggestedActivities from './SuggestedActivities';
 import TravelAssistant from './TravelAssistant';
 
@@ -40,124 +39,138 @@ export default function TravelPlan({ plan, travelData, onUpdatePlan }) {
   }
 
   return (
-    <div className="ios-card">
-      <TravelPlanHeader plan={plan} />
+    <div className="travel-plan mt-4">
+      <TravelPlanHeader planData={plan} onBack={() => {}} />
       
-      {/* زر تحسين الخطة باستخدام OpenAI */}
-      <EnhancePlanButton travelPlan={plan} onEnhancedPlan={onUpdatePlan} />
-      
-      <div className="border-b mb-4">
-        <nav className="ios-tabs hide-scrollbar">
-          <button
-            onClick={() => setActiveTab('overview')}
-            className={`ios-tab ${activeTab === 'overview' ? 'ios-tab-active' : ''}`}
-          >
-            نظرة عامة
-          </button>
-          <button
-            onClick={() => setActiveTab('daily')}
-            className={`ios-tab ${activeTab === 'daily' ? 'ios-tab-active' : ''}`}
-          >
-            الخطة اليومية
-          </button>
-          <button
-            onClick={() => setActiveTab('accommodation')}
-            className={`ios-tab ${activeTab === 'accommodation' ? 'ios-tab-active' : ''}`}
-          >
-            الإقامة
-          </button>
-          <button
-            onClick={() => setActiveTab('budget')}
-            className={`ios-tab ${activeTab === 'budget' ? 'ios-tab-active' : ''}`}
-          >
-            الميزانية
-          </button>
-          <button
-            onClick={() => setActiveTab('suggestions')}
-            className={`ios-tab ${activeTab === 'suggestions' ? 'ios-tab-active' : ''}`}
-          >
-            اقتراحات
-          </button>
-          <button
-            onClick={() => setActiveTab('assistant')}
-            className={`ios-tab ${activeTab === 'assistant' ? 'ios-tab-active' : ''}`}
-          >
-            المساعد
-          </button>
-        </nav>
+      <div className="tabs">
+        <button
+          className={`tab ${activeTab === 'overview' ? 'active' : ''}`}
+          onClick={() => setActiveTab('overview')}
+        >
+          <FaInfoCircle className="ml-1" />
+          نظرة عامة
+        </button>
+        <button
+          className={`tab ${activeTab === 'daily' ? 'active' : ''}`}
+          onClick={() => setActiveTab('daily')}
+        >
+          <FaCalendarDay className="ml-1" />
+          الخطة اليومية
+        </button>
+        <button
+          className={`tab ${activeTab === 'accommodations' ? 'active' : ''}`}
+          onClick={() => setActiveTab('accommodations')}
+        >
+          <FaBed className="ml-1" />
+          السكن
+        </button>
+        <button
+          className={`tab ${activeTab === 'budget' ? 'active' : ''}`}
+          onClick={() => setActiveTab('budget')}
+        >
+          <FaMoneyBillWave className="ml-1" />
+          الميزانية
+        </button>
+        <button
+          className={`tab ${activeTab === 'suggestions' ? 'active' : ''}`}
+          onClick={() => setActiveTab('suggestions')}
+        >
+          <FaLightbulb className="ml-1" />
+          اقتراحات
+        </button>
       </div>
       
-      {/* محتوى التبويبات */}
-      <div className="mt-4">
-        {/* نظرة عامة */}
-        {activeTab === 'overview' && (
-          <div>
-            <div className="mb-4">
-              <h3 className="text-lg font-semibold mb-2">نظرة عامة على الرحلة</h3>
-              <p className="text-gray-600 text-sm">{plan.summary}</p>
-            </div>
-            
-            <div className="grid grid-cols-2 gap-3 mb-4">
-              <div className="ios-card p-3">
-                <div className="flex items-center">
-                  <FaCalendarDay className="text-[rgb(var(--ios-blue))] ml-2" />
-                  <div>
-                    <p className="text-xs text-gray-500">المدة</p>
-                    <p className="font-semibold">{plan.duration} أيام</p>
+      <div className="card mb-4">
+        <div className="card-body">
+          {activeTab === 'overview' && (
+            <div>
+              <h3 className="heading-2 mb-4 text-primary">
+                <FaInfoCircle className="ml-1" /> نظرة عامة
+              </h3>
+              <div className="whitespace-pre-wrap text-neutral-700">
+                {plan.summary}
+              </div>
+              <div className="grid grid-cols-2 gap-3 mb-4">
+                <div className="ios-card p-3">
+                  <div className="flex items-center">
+                    <FaCalendarDay className="text-[rgb(var(--ios-blue))] ml-2" />
+                    <div>
+                      <p className="text-xs text-gray-500">المدة</p>
+                      <p className="font-semibold">{plan.duration} أيام</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="ios-card p-3">
+                  <div className="flex items-center">
+                    <FaMoneyBillWave className="text-[rgb(var(--ios-blue))] ml-2" />
+                    <div>
+                      <p className="text-xs text-gray-500">الميزانية</p>
+                      <p className="font-semibold">${plan.budget}</p>
+                    </div>
                   </div>
                 </div>
               </div>
-              
-              <div className="ios-card p-3">
-                <div className="flex items-center">
-                  <FaMoneyBillWave className="text-[rgb(var(--ios-blue))] ml-2" />
-                  <div>
-                    <p className="text-xs text-gray-500">الميزانية</p>
-                    <p className="font-semibold">${plan.budget}</p>
-                  </div>
-                </div>
+              <div className="mb-4">
+                <h3 className="text-lg font-semibold mb-2">أفضل الأوقات للزيارة</h3>
+                <p className="text-gray-600 text-sm">{plan.bestTimeToVisit || 'غير محدد'}</p>
+              </div>
+              <div className="mb-4">
+                <h3 className="text-lg font-semibold mb-2">نصائح مهمة</h3>
+                <ul className="ios-list">
+                  {plan.tips && plan.tips.length > 0 ? (
+                    plan.tips.map((tip, index) => (
+                      <li key={index} className="ios-list-item text-sm">
+                        <div className="flex">
+                          <FaLightbulb className="text-yellow-500 ml-2 mt-1 flex-shrink-0" />
+                          <span>{tip}</span>
+                        </div>
+                      </li>
+                    ))
+                  ) : (
+                    <li className="ios-list-item text-sm text-gray-500">لا توجد نصائح متاحة</li>
+                  )}
+                </ul>
               </div>
             </div>
-            
-            <div className="mb-4">
-              <h3 className="text-lg font-semibold mb-2">أفضل الأوقات للزيارة</h3>
-              <p className="text-gray-600 text-sm">{plan.bestTimeToVisit || 'غير محدد'}</p>
+          )}
+          
+          {activeTab === 'daily' && (
+            <div>
+              <h3 className="heading-2 mb-4 text-primary">
+                <FaCalendarDay className="ml-1" /> الخطة اليومية
+              </h3>
+              <DailyPlanSection dailyPlan={plan.dailyPlan} />
             </div>
-            
-            <div className="mb-4">
-              <h3 className="text-lg font-semibold mb-2">نصائح مهمة</h3>
-              <ul className="ios-list">
-                {plan.tips && plan.tips.length > 0 ? (
-                  plan.tips.map((tip, index) => (
-                    <li key={index} className="ios-list-item text-sm">
-                      <div className="flex">
-                        <FaLightbulb className="text-yellow-500 ml-2 mt-1 flex-shrink-0" />
-                        <span>{tip}</span>
-                      </div>
-                    </li>
-                  ))
-                ) : (
-                  <li className="ios-list-item text-sm text-gray-500">لا توجد نصائح متاحة</li>
-                )}
-              </ul>
+          )}
+          
+          {activeTab === 'accommodations' && (
+            <div>
+              <h3 className="heading-2 mb-4 text-primary">
+                <FaBed className="ml-1" /> خيارات السكن
+              </h3>
+              <AccommodationSection accommodation={plan.accommodation} />
             </div>
-          </div>
-        )}
-        
-        {/* الخطة اليومية */}
-        {activeTab === 'daily' && <DailyPlanSection dailyPlan={plan.dailyPlan} />}
-        
-        {/* الإقامة */}
-        {activeTab === 'accommodation' && <AccommodationSection accommodation={plan.accommodation} />}
-        
-        {/* الميزانية */}
-        {activeTab === 'budget' && <BudgetSection budget={plan.budgetBreakdown} />}
-        
-        {/* اقتراحات */}
-        {activeTab === 'suggestions' && <SuggestedActivities destination={plan.destination} />}
-        
-        {/* المساعد */}
-        {activeTab === 'assistant' && <TravelAssistant destination={plan.destination} />}
+          )}
+          
+          {activeTab === 'budget' && (
+            <div>
+              <h3 className="heading-2 mb-4 text-primary">
+                <FaMoneyBillWave className="ml-1" /> تفاصيل الميزانية
+              </h3>
+              <BudgetSection budget={plan.budgetBreakdown} />
+            </div>
+          )}
+          
+          {activeTab === 'suggestions' && (
+            <div>
+              <h3 className="heading-2 mb-4 text-primary">
+                <FaLightbulb className="ml-1" /> اقتراحات خاصة
+              </h3>
+              <SuggestedActivities destination={plan.destination} />
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
