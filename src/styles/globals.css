@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=SF+Arabic:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -7,12 +7,21 @@
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-rgb: 248, 250, 252;
+  --ios-blue: 0, 122, 255;
+  --ios-green: 52, 199, 89;
+  --ios-red: 255, 59, 48;
+  --ios-orange: 255, 149, 0;
+  --ios-purple: 175, 82, 222;
+  --ios-gray: 142, 142, 147;
+  --ios-light-gray: 242, 242, 247;
 }
 
 body {
   color: rgb(var(--foreground-rgb));
   background: rgb(var(--background-rgb));
-  font-family: 'Tajawal', sans-serif;
+  font-family: 'SF Arabic', 'Tajawal', -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* تنسيقات عامة */
@@ -34,24 +43,43 @@ body {
 
 /* تنسيقات العناوين */
 h1, h2, h3, h4, h5, h6 {
-  font-weight: 700;
+  font-weight: 600;
   margin-bottom: 0.5rem;
+  letter-spacing: -0.01em;
 }
 
 /* تنسيقات البطاقات */
 .ios-card {
   background-color: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-  padding: 20px;
-  margin-bottom: 16px;
-  transition: all 0.3s ease;
-  border: 1px solid #f0f0f0;
+  border-radius: 10px;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.04);
+  padding: 16px;
+  margin-bottom: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
 }
 
-.ios-card:hover {
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-  transform: translateY(-2px);
+.ios-card-compact {
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  padding: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.ios-card-selected {
+  border-color: rgb(var(--ios-blue));
+  box-shadow: 0 0 0 1px rgba(var(--ios-blue), 0.4);
+}
+
+.ios-card-header {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.04);
+  margin-bottom: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
 }
 
 /* تنسيقات الأزرار */
@@ -61,144 +89,228 @@ h1, h2, h3, h4, h5, h6 {
   justify-content: center;
   padding: 10px 16px;
   border-radius: 8px;
-  font-weight: 600;
+  font-weight: 500;
   transition: all 0.2s ease;
   cursor: pointer;
+  background-color: rgb(var(--ios-blue));
+  color: white;
+}
+
+.ios-button:hover {
+  opacity: 0.9;
 }
 
 .ios-button-primary {
-  background-color: #007aff;
+  background-color: rgb(var(--ios-blue));
   color: white;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.2s ease;
 }
 
 .ios-button-primary:hover {
-  background-color: #0062cc;
+  opacity: 0.9;
 }
 
 .ios-button-secondary {
-  background-color: #e9f0ff;
-  color: #007aff;
+  background-color: rgb(var(--ios-light-gray));
+  color: rgb(var(--ios-blue));
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.2s ease;
 }
 
 .ios-button-secondary:hover {
-  background-color: #d0e1ff;
+  background-color: rgba(var(--ios-blue), 0.1);
 }
 
-.ios-button-success {
-  background-color: #34c759;
+.ios-button-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background-color: rgb(var(--ios-light-gray));
+  color: rgb(var(--ios-blue));
+  transition: all 0.2s ease;
+}
+
+.ios-button-icon:hover {
+  background-color: rgba(var(--ios-blue), 0.1);
+}
+
+.ios-floating-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  border-radius: 25px;
+  background-color: rgb(var(--ios-blue));
+  color: white;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.ios-floating-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.15);
+}
+
+.ios-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  background-color: rgb(var(--ios-light-gray));
+  color: rgb(var(--ios-gray));
+  white-space: nowrap;
+}
+
+.ios-pill-active {
+  background-color: rgb(var(--ios-blue));
   color: white;
 }
 
-.ios-button-success:hover {
-  background-color: #2db84c;
-}
-
-/* تنسيقات الانتقالات */
-.ios-transition {
-  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
-}
-
-/* تنسيقات منتقي التاريخ */
-.react-datepicker-wrapper {
+/* تنسيقات الحقول */
+.ios-input {
   width: 100%;
-}
-
-.react-datepicker {
-  font-family: 'Tajawal', sans-serif !important;
-  border-radius: 12px !important;
-  overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
-  border: none !important;
-}
-
-.react-datepicker__header {
-  background-color: #f2f2f7 !important;
-  border-bottom: none !important;
-}
-
-.react-datepicker__day--selected {
-  background-color: #007aff !important;
-  color: white !important;
-  border-radius: 50% !important;
-}
-
-/* تنسيقات الألوان */
-:root {
-  --ios-blue: #007aff;
-  --ios-light-blue: #e9f0ff;
-  --ios-green: #34c759;
-  --ios-red: #ff3b30;
-  --ios-yellow: #ffcc00;
-  --ios-gray: #8e8e93;
-  --ios-light-gray: #f2f2f7;
-}
-
-.text-ios-blue {
-  color: var(--ios-blue);
-}
-
-.bg-ios-blue {
-  background-color: var(--ios-blue);
-}
-
-.bg-ios-light-gray {
-  background-color: var(--ios-light-gray);
-}
-
-/* تنسيقات خاصة بالجوال */
-@media (max-width: 640px) {
-  .ios-card {
-    padding: 16px;
-    margin-bottom: 12px;
-  }
-  
-  .ios-button {
-    padding: 8px 12px;
-    font-size: 14px;
-  }
-  
-  h1 {
-    font-size: 1.5rem;
-  }
-  
-  h2 {
-    font-size: 1.25rem;
-  }
-}
-
-/* تنسيقات لإصلاح مشكلات RTL في المتصفحات */
-[dir="rtl"] .react-datepicker__navigation--previous {
-  left: auto;
-  right: 10px;
-}
-
-[dir="rtl"] .react-datepicker__navigation--next {
-  right: auto;
-  left: 10px;
-}
-
-/* تنسيقات للشاشات الصغيرة */
-.mobile-container {
-  max-width: 100%;
-  padding: 0 12px;
-}
-
-@media (min-width: 640px) {
-  .mobile-container {
-    max-width: 640px;
-    margin: 0 auto;
-    padding: 0 16px;
-  }
-}
-
-/* تنسيقات لعرض JSON */
-.json-view {
-  direction: ltr;
-  text-align: left;
-  font-family: monospace;
-  white-space: pre-wrap;
-  background-color: #f5f5f5;
   padding: 12px;
   border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background-color: rgb(var(--ios-light-gray));
+  transition: all 0.2s ease;
+}
+
+.ios-input:focus {
+  border-color: rgb(var(--ios-blue));
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(var(--ios-blue), 0.2);
+}
+
+.ios-label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 500;
+  color: #333;
+}
+
+/* تنسيقات التبويبات */
+.ios-tabs {
+  display: flex;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  margin-bottom: 16px;
+}
+
+.ios-tab {
+  padding: 8px 16px;
+  font-weight: 500;
+  color: rgb(var(--ios-gray));
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.ios-tab-active {
+  color: rgb(var(--ios-blue));
+  border-bottom-color: rgb(var(--ios-blue));
+}
+
+/* تنسيقات القوائم */
+.ios-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ios-list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.ios-list-item:last-child {
+  border-bottom: none;
+}
+
+/* تنسيقات الرسائل */
+.ios-message {
+  padding: 12px;
+  border-radius: 8px;
+  background-color: rgb(var(--ios-light-gray));
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.ios-message-error {
+  background-color: rgba(var(--ios-red), 0.1);
+  color: rgb(var(--ios-red));
+  border: 1px solid rgba(var(--ios-red), 0.2);
+}
+
+.ios-message-success {
+  background-color: rgba(var(--ios-green), 0.1);
+  color: rgb(var(--ios-green));
+  border: 1px solid rgba(var(--ios-green), 0.2);
+}
+
+.ios-message-info {
+  background-color: rgba(var(--ios-blue), 0.1);
+  color: rgb(var(--ios-blue));
+  border: 1px solid rgba(var(--ios-blue), 0.2);
+}
+
+.ios-message-user {
+  background-color: rgba(var(--ios-blue), 0.1);
+  color: rgb(var(--foreground-rgb));
+  padding: 8px 12px;
+  border-radius: 16px;
+  border-top-right-radius: 4px;
+  max-width: 80%;
+}
+
+.ios-message-assistant {
+  background-color: rgb(var(--ios-light-gray));
+  color: rgb(var(--foreground-rgb));
+  padding: 8px 12px;
+  border-radius: 16px;
+  border-top-left-radius: 4px;
+  max-width: 80%;
+}
+
+/* تنسيقات إضافية */
+.ios-scrollview-x {
   overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 4px;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* تنسيقات للهواتف فقط */
+@media (max-width: 768px) {
+  .container {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  
+  .ios-card {
+    padding: 14px;
+    margin-bottom: 10px;
+  }
 }

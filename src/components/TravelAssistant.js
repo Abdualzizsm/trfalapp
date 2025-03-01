@@ -79,33 +79,33 @@ const TravelAssistant = ({ travelPlan }) => {
       {/* زر فتح/إغلاق المساعد */}
       <button
         onClick={toggleAssistant}
-        className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-110"
+        className="ios-floating-button"
       >
-        <FaRobot className="text-2xl" />
+        <FaRobot className="text-xl" />
       </button>
       
       {/* نافذة المساعد */}
       {isOpen && (
-        <div className="absolute bottom-16 left-0 w-80 md:w-96 bg-white rounded-lg shadow-2xl border border-gray-200 overflow-hidden">
+        <div className="absolute bottom-16 left-0 w-80 md:w-96 bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
           {/* رأس النافذة */}
-          <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-4">
-            <div className="flex items-center">
-              <FaRobot className="text-2xl mr-2" />
-              <h3 className="text-lg font-semibold">مساعد السفر الذكي</h3>
+          <div className="ios-card-header bg-[rgb(var(--ios-blue))]">
+            <FaRobot className="text-white ml-2" />
+            <div>
+              <h3 className="text-base font-semibold text-white">مساعد السفر الذكي</h3>
+              <p className="text-xs text-blue-100">اسأل أي سؤال عن رحلتك أو الوجهة</p>
             </div>
-            <p className="text-sm text-blue-100 mt-1">اسأل أي سؤال عن رحلتك أو الوجهة</p>
           </div>
           
           {/* محتوى المحادثة */}
-          <div className="h-80 overflow-y-auto p-4 bg-gray-50">
+          <div className="h-72 overflow-y-auto p-3 bg-gray-50">
             {conversations.length === 0 ? (
-              <div className="text-center py-8">
-                <FaHistory className="text-4xl text-gray-300 mx-auto mb-3" />
-                <p className="text-gray-500">لم تبدأ أي محادثة بعد</p>
-                <p className="text-gray-400 text-sm mt-2">اسأل أي سؤال عن رحلتك</p>
+              <div className="text-center py-6">
+                <FaHistory className="text-3xl text-gray-300 mx-auto mb-2" />
+                <p className="text-sm text-gray-500">لم تبدأ أي محادثة بعد</p>
+                <p className="text-xs text-gray-400 mt-1">اسأل أي سؤال عن رحلتك</p>
                 
-                <div className="mt-6">
-                  <p className="text-gray-600 text-sm mb-2">أسئلة مقترحة:</p>
+                <div className="mt-4">
+                  <p className="text-xs text-gray-600 mb-2">أسئلة مقترحة:</p>
                   <div className="space-y-2">
                     {suggestedQuestions.map((q, index) => (
                       <button
@@ -114,7 +114,7 @@ const TravelAssistant = ({ travelPlan }) => {
                           setQuestion(q);
                           setTimeout(() => document.getElementById('question-input').focus(), 100);
                         }}
-                        className="text-sm bg-white text-gray-700 px-3 py-2 rounded-lg border border-gray-200 hover:bg-gray-100 hover:border-gray-300 transition-colors block w-full text-right"
+                        className="text-xs bg-white text-gray-700 px-3 py-1.5 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors block w-full text-right"
                       >
                         {q}
                       </button>
@@ -123,26 +123,28 @@ const TravelAssistant = ({ travelPlan }) => {
                 </div>
               </div>
             ) : (
-              <div className="space-y-6">
+              <div className="space-y-4">
                 {conversations.map((conv, index) => (
-                  <div key={index} className="space-y-3">
+                  <div key={index} className="space-y-2">
                     {/* سؤال المستخدم */}
                     <div className="flex justify-end">
-                      <div className="bg-blue-100 text-gray-800 p-3 rounded-lg rounded-tr-none max-w-[80%]">
-                        {conv.question}
+                      <div className="ios-message-user">
+                        <p className="text-xs">{conv.question}</p>
                       </div>
                     </div>
                     
                     {/* إجابة المساعد */}
                     <div className="flex justify-start">
                       {index === conversations.length - 1 && !conv.answer && isLoading ? (
-                        <div className="bg-gray-100 text-gray-500 p-3 rounded-lg rounded-tl-none max-w-[80%] flex items-center">
-                          <FaSpinner className="animate-spin mr-2" />
-                          <span>جاري التفكير...</span>
+                        <div className="ios-message-assistant">
+                          <div className="flex items-center text-xs">
+                            <FaSpinner className="animate-spin ml-1.5" />
+                            <span>جاري التفكير...</span>
+                          </div>
                         </div>
                       ) : (
-                        <div className="bg-gray-100 text-gray-800 p-3 rounded-lg rounded-tl-none max-w-[80%]">
-                          {conv.answer || 'عذراً، لم أتمكن من الإجابة على سؤالك.'}
+                        <div className="ios-message-assistant">
+                          <p className="text-xs">{conv.answer || 'عذراً، لم أتمكن من الإجابة على سؤالك.'}</p>
                         </div>
                       )}
                     </div>
@@ -153,7 +155,7 @@ const TravelAssistant = ({ travelPlan }) => {
           </div>
           
           {/* نموذج السؤال */}
-          <form onSubmit={handleSubmit} className="p-3 border-t border-gray-200 bg-white">
+          <form onSubmit={handleSubmit} className="p-2 border-t border-gray-200 bg-white">
             <div className="flex">
               <input
                 id="question-input"
@@ -161,7 +163,7 @@ const TravelAssistant = ({ travelPlan }) => {
                 value={question}
                 onChange={(e) => setQuestion(e.target.value)}
                 placeholder="اكتب سؤالك هنا..."
-                className="flex-1 p-2 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="flex-1 p-2 text-sm border border-gray-300 rounded-l-lg focus:outline-none focus:ring-1 focus:ring-[rgb(var(--ios-blue))]"
                 disabled={isLoading}
               />
               <button
@@ -169,8 +171,8 @@ const TravelAssistant = ({ travelPlan }) => {
                 disabled={isLoading || !question.trim()}
                 className={`p-2 rounded-r-lg ${
                   isLoading || !question.trim()
-                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                    : 'bg-blue-600 text-white hover:bg-blue-700'
+                    ? 'bg-gray-300 text-gray-500'
+                    : 'bg-[rgb(var(--ios-blue))] text-white'
                 }`}
               >
                 {isLoading ? <FaSpinner className="animate-spin" /> : <FaPaperPlane />}
@@ -178,7 +180,7 @@ const TravelAssistant = ({ travelPlan }) => {
             </div>
             
             {error && (
-              <div className="mt-2 text-red-500 text-xs">
+              <div className="mt-1 text-[rgb(var(--ios-red))] text-xs">
                 {error}
               </div>
             )}

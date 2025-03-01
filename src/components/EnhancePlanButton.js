@@ -27,14 +27,12 @@ const EnhancePlanButton = ({ travelPlan, onEnhancedPlan }) => {
   };
 
   return (
-    <div className="my-4">
+    <div className="my-3">
       <button
         onClick={enhancePlan}
         disabled={isEnhancing}
-        className={`flex items-center justify-center gap-2 w-full py-3 px-6 rounded-lg text-white font-medium transition-all duration-300 transform hover:scale-105 ${
-          isEnhancing 
-            ? 'bg-gray-400 cursor-not-allowed' 
-            : 'bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 shadow-lg hover:shadow-xl'
+        className={`ios-button-primary flex items-center justify-center gap-2 w-full ${
+          isEnhancing ? 'opacity-70' : ''
         }`}
       >
         {isEnhancing ? (
@@ -51,12 +49,12 @@ const EnhancePlanButton = ({ travelPlan, onEnhancedPlan }) => {
       </button>
       
       {error && (
-        <div className="mt-2 text-red-500 text-sm text-center">
+        <div className="mt-1.5 text-[rgb(var(--ios-red))] text-xs text-center">
           {error}
         </div>
       )}
       
-      <div className="mt-2 text-xs text-gray-500 text-center">
+      <div className="mt-1.5 text-xs text-gray-500 text-center">
         يستخدم هذا الزر تقنية OpenAI لتحسين خطة السفر وإضافة تفاصيل أكثر فائدة
       </div>
     </div>

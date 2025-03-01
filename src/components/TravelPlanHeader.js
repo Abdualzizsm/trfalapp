@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { FaMapMarkedAlt, FaShare, FaDownload, FaClipboard, FaPrint, FaCheck, FaInfoCircle, FaPlane, FaHotel, FaUtensils, FaCalendarAlt } from 'react-icons/fa';
 import { EmailShareButton, WhatsappShareButton, TwitterShareButton, FacebookShareButton, EmailIcon, WhatsappIcon, TwitterIcon, FacebookIcon } from 'react-share';
+import TravelPlanHeader from './TravelPlanHeader';
 
-export default function TravelPlanHeader({ plan }) {
+export default function TravelPlan({ plan }) {
   const [showShareOptions, setShowShareOptions] = useState(false);
   const [copied, setCopied] = useState(false);
   const shareUrl = typeof window !== 'undefined' ? window.location.href : '';
@@ -50,68 +51,10 @@ export default function TravelPlanHeader({ plan }) {
 
   return (
     <div className="mb-6">
-      {/* عنوان الخطة مع تأثيرات بصرية */}
-      <div className="bg-gradient-to-l from-blue-50 to-white p-4 rounded-lg shadow-sm mb-6 border-r-4 border-ios-blue">
-        <div className="flex justify-between items-center">
-          <h2 className="text-2xl md:text-3xl font-bold flex items-center text-gray-800">
-            <FaMapMarkedAlt className="ml-2 text-ios-blue" />
-            {plan?.overview?.title || 'خطة السفر'}
-          </h2>
-          <div className="flex space-x-2 space-x-reverse">
-            <div className="relative">
-              <button 
-                className="ios-button ios-button-secondary flex items-center hover:bg-gray-100 transition-colors duration-200"
-                onClick={() => setShowShareOptions(!showShareOptions)}
-              >
-                <FaShare className="ml-1" />
-                <span className="hidden sm:inline">مشاركة</span>
-              </button>
-              
-              {/* خيارات المشاركة */}
-              {showShareOptions && (
-                <div className="absolute left-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 p-2 z-10">
-                  <div className="flex flex-col space-y-2">
-                    <div className="flex justify-between p-2 hover:bg-gray-50 rounded cursor-pointer" onClick={handleCopyLink}>
-                      <span className="text-sm font-medium">نسخ الرابط</span>
-                      {copied ? <FaCheck className="text-green-500" /> : <FaClipboard />}
-                    </div>
-                    <div className="flex justify-between p-2 hover:bg-gray-50 rounded cursor-pointer" onClick={handlePrint}>
-                      <span className="text-sm font-medium">طباعة</span>
-                      <FaPrint />
-                    </div>
-                    <div className="border-t my-1"></div>
-                    <div className="flex justify-center space-x-2 space-x-reverse p-2">
-                      <WhatsappShareButton url={shareUrl} title={title}>
-                        <WhatsappIcon size={32} round />
-                      </WhatsappShareButton>
-                      <FacebookShareButton url={shareUrl} quote={title}>
-                        <FacebookIcon size={32} round />
-                      </FacebookShareButton>
-                      <TwitterShareButton url={shareUrl} title={title}>
-                        <TwitterIcon size={32} round />
-                      </TwitterShareButton>
-                      <EmailShareButton url={shareUrl} subject={title} body="شاهد خطة السفر هذه:">
-                        <EmailIcon size={32} round />
-                      </EmailShareButton>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-            
-            <button 
-              className="ios-button ios-button-secondary flex items-center hover:bg-gray-100 transition-colors duration-200"
-              onClick={handleDownload}
-            >
-              <FaDownload className="ml-1" />
-              <span className="hidden sm:inline">تنزيل</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
+      <TravelPlanHeader plan={plan} />
+      
       {/* وصف الخطة */}
-      <div className="bg-white p-5 rounded-lg shadow-sm mb-5 border border-gray-100 hover:shadow-md transition-shadow duration-300">
+      <div className="bg-white p-5 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-300">
         <p className="text-gray-700 leading-relaxed text-lg">{plan?.overview?.description}</p>
       </div>
 
@@ -166,6 +109,55 @@ export default function TravelPlanHeader({ plan }) {
           </ul>
         </div>
       )}
+      
+      {/* خيارات المشاركة */}
+      <div className="relative">
+        <button 
+          className="ios-button ios-button-secondary flex items-center hover:bg-gray-100 transition-colors duration-200"
+          onClick={() => setShowShareOptions(!showShareOptions)}
+        >
+          <FaShare className="ml-1" />
+          <span className="hidden sm:inline">مشاركة</span>
+        </button>
+        
+        {showShareOptions && (
+          <div className="absolute left-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 p-2 z-10">
+            <div className="flex flex-col space-y-2">
+              <div className="flex justify-between p-2 hover:bg-gray-50 rounded cursor-pointer" onClick={handleCopyLink}>
+                <span className="text-sm font-medium">نسخ الرابط</span>
+                {copied ? <FaCheck className="text-green-500" /> : <FaClipboard />}
+              </div>
+              <div className="flex justify-between p-2 hover:bg-gray-50 rounded cursor-pointer" onClick={handlePrint}>
+                <span className="text-sm font-medium">طباعة</span>
+                <FaPrint />
+              </div>
+              <div className="border-t my-1"></div>
+              <div className="flex justify-center space-x-2 space-x-reverse p-2">
+                <WhatsappShareButton url={shareUrl} title={title}>
+                  <WhatsappIcon size={32} round />
+                </WhatsappShareButton>
+                <FacebookShareButton url={shareUrl} quote={title}>
+                  <FacebookIcon size={32} round />
+                </FacebookShareButton>
+                <TwitterShareButton url={shareUrl} title={title}>
+                  <TwitterIcon size={32} round />
+                </TwitterShareButton>
+                <EmailShareButton url={shareUrl} subject={title} body="شاهد خطة السفر هذه:">
+                  <EmailIcon size={32} round />
+                </EmailShareButton>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+      
+      <button 
+        className="ios-button ios-button-secondary flex items-center hover:bg-gray-100 transition-colors duration-200"
+        onClick={handleDownload}
+      >
+        <FaDownload className="ml-1" />
+        <span className="hidden sm:inline">تنزيل</span>
+      </button>
     </div>
   );
 }
