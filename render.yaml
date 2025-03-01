@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: trafl-app
+    env: node
+    region: frankfurt  # يمكنك تغيير المنطقة حسب الحاجة
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: COHERE_API_KEY
+        sync: false  # هذا يعني أنك ستضيف القيمة يدويًا في لوحة تحكم Render
+    autoDeploy: true
+    healthCheckPath: /
+    plan: free  # يمكنك تغييره إلى خطة مدفوعة إذا كنت بحاجة إلى مزيد من الموارد
