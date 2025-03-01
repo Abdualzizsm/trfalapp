@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { FaBed, FaCalendarDay, FaMoneyBillWave, FaInfoCircle, FaPlane, FaLightbulb } from 'react-icons/fa';
-import TravelPlanHeader_new from './TravelPlanHeader_new';
+import TravelPlanHeader from './TravelPlanHeader';
 import AccommodationSection from './AccommodationSection';
 import DailyPlanSection from './DailyPlanSection';
 import BudgetSection from './BudgetSection';
@@ -41,7 +41,7 @@ export default function TravelPlan({ plan, travelData, onUpdatePlan }) {
 
   return (
     <div className="ios-card">
-      <TravelPlanHeader_new plan={plan} />
+      <TravelPlanHeader plan={plan} />
       
       {/* زر تحسين الخطة باستخدام OpenAI */}
       <EnhancePlanButton travelPlan={plan} onEnhancedPlan={onUpdatePlan} />
