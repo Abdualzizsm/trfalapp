@@ -5,17 +5,22 @@ import OpenAI from "openai";
  * @returns {OpenAI} - عميل OpenAI
  */
 function createOpenAIClient() {
-  // التحقق من وجود مفتاح API
-  if (!process.env.OPENAI_API_KEY) {
-    console.warn('مفتاح OpenAI API غير موجود. سيتم استخدام بيانات وهمية للاختبار.');
+  try {
+    // التحقق من وجود مفتاح API
+    if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY.startsWith('ghp_')) {
+      console.warn('مفتاح OpenAI API غير موجود أو غير صالح. سيتم استخدام بيانات وهمية للاختبار.');
+      return null;
+    }
+
+    // إنشاء عميل OpenAI
+    return new OpenAI({
+      baseURL: "https://models.inference.ai.azure.com",
+      apiKey: process.env.OPENAI_API_KEY
+    });
+  } catch (error) {
+    console.error('خطأ في إنشاء عميل OpenAI:', error);
     return null;
   }
-
-  // إنشاء عميل OpenAI
-  return new OpenAI({
-    baseURL: "https://models.inference.ai.azure.com",
-    apiKey: process.env.OPENAI_API_KEY
-  });
 }
 
 // بيانات وهمية للاختبار المحلي
