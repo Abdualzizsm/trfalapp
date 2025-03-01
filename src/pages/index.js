@@ -14,6 +14,7 @@ export default function Home() {
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [loadingStage, setLoadingStage] = useState('');
   const [travelData, setTravelData] = useState(null);
+  const [cssVersion] = useState('v1'); // إضافة متغير لإجبار تحديث CSS
 
   // محاكاة تقدم التحميل
   useEffect(() => {
