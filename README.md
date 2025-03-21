@@ -30,8 +30,9 @@ cd trafl-app
 npm install
 ```
 
-3. إنشاء ملف `.env.local` وإضافة مفتاح API الخاص بك:
+3. إنشاء ملف `.env.local` وإضافة مفاتيح API الخاصة بك:
 ```
+OPENAI_API_KEY=your_openai_api_key_here
 COHERE_API_KEY=your_cohere_api_key_here
 ```
 
